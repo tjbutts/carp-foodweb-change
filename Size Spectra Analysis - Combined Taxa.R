@@ -2484,7 +2484,7 @@ output
 
 # Calculate average density per bin # 
 output.combined = output %>% 
-  group_by(group, taxon, year, lake, season, BINMID, BINMIN, BINMAX) %>%
+  group_by(year, lake, season, BINMID, BINMIN, BINMAX) %>%
   summarize(avg.density.areal = mean(density.areal, na.rm = T)) %>%
   ungroup()
 
@@ -2501,7 +2501,7 @@ output.combined
 # log 2 binning # 
 
 output.binned = output.combined %>% # Remove season from grouping 
-  group_by(group, taxon, year, lake, BINMID, BINMIN, BINMAX) %>%
+  group_by(year, lake, BINMID, BINMIN, BINMAX) %>%
   mutate(BINMID_LOG = log2(BINMID), BINMIN_LOG = log2(BINMIN), BINMAX_LOG = log2(BINMAX), DENS_LOG = log2(avg.density.areal)) %>%
   ungroup()
 output.binned
@@ -2520,43 +2520,6 @@ minmax_bins = output.combined %>%
     maximum = max(BINMAX_LOG)) %>%
   ungroup()
 minmax_bins
-
-output.common = output %>% mutate(biom_log = log2(biomass_g))
-output.common$biom_log
-
-# # Find common bin across all lakes 
-# x1 = output.common[output.common$lake == 'Blue' & output.common$year == 2018, 'biom_log']
-# x1.2 = output.common[output.common$lake == 'Blue' & output.common$year == 2019, 'biom_log']
-# x1.3 = output.common[output.common$lake == 'Blue' & output.common$year == 2020, 'biom_log']
-# x2 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2018, 'biom_log']
-# x2.2 = output.common[output.common$lake == 'south.Twin' & output.common$year == 2019, 'biom_log']
-# x2.3 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2020, 'biom_log']
-# x3 = output.common[output.common$lake == 'Storm' & output.common$year == 2018, 'biom_log']
-# x3.2 = output.common[output.common$lake == 'Storm' & output.common$year == 2019, 'biom_log']
-# x3.3 = output.common[output.common$lake == 'Storm' & output.common$year == 2020, 'biom_log']
-# x4 = output.common[output.common$lake == 'Center' & output.common$year == 2018, 'biom_log']
-# x4.2 = output.common[output.common$lake == 'Center' & output.common$year == 2019, 'biom_log']
-# x4.3 = output.common[output.common$lake == 'Center' & output.common$year == 2020, 'biom_log']
-# x5 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2018, 'biom_log']
-# x5.2 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2019, 'biom_log']
-# x5.3 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2020, 'biom_log']
-# x6 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2018, 'biom_log']
-# x6.2 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2019, 'biom_log']
-# x6.3 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2020, 'biom_log']
-# x7 = output.common[output.common$lake == 'Silver' & output.common$year == 2018, 'biom_log']
-# x7.2 = output.common[output.common$lake == 'Silver' & output.common$year == 2019, 'biom_log']
-# x7.3 = output.common[output.common$lake == 'Silver' & output.common$year == 2020, 'biom_log']
-# 
-# 
-# Reduce(intersect, list(x1, x1.2, x1.3, 
-#                        x2, x2.2, x2.3,
-#                        x3, x3.2, x3.3,
-#                        x4, x4.2, x4.3,
-#                        x5, x5.2, x5.3,
-#                        x6, x6.2, x6.3,
-#                        x7, x7.2, x7.3)) # Identify common elements
-# 
-# # No consistent bin #  
 
 
 ## Linear fits of pelagic size spectrum by lake by year ## 
