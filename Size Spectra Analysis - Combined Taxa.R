@@ -1636,6 +1636,7 @@ zoop.dat
 
 # Add Blue Lake 2019 Data ##===============================
 setwd("C:/Users/tjbut/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change/ALM Zoops")
+setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change/ALM Zoops")
 
 blue19 = read_csv('blue19.zoop.csv') %>% 
   select(sampleID, lake, year, season, doy, taxon, group, biomass_g, count, density.areal)
@@ -2388,7 +2389,7 @@ output = rbind(zoop.join, miv.dat) %>%
   arrange(lake)
 output
 
-write_csv(output, 'SSA start_zoop.miv-biomass.csv')
+#write_csv(output, 'SSA start_zoop.miv-biomass.csv')
 
 
 # Load in SSA dataset #===========================
@@ -2523,39 +2524,39 @@ minmax_bins
 output.common = output %>% mutate(biom_log = log2(biomass_g))
 output.common$biom_log
 
-# Find common bin across all lakes 
-x1 = output.common[output.common$lake == 'Blue' & output.common$year == 2018, 'biom_log']
-x1.2 = output.common[output.common$lake == 'Blue' & output.common$year == 2019, 'biom_log']
-x1.3 = output.common[output.common$lake == 'Blue' & output.common$year == 2020, 'biom_log']
-x2 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2018, 'biom_log']
-x2.2 = output.common[output.common$lake == 'south.Twin' & output.common$year == 2019, 'biom_log']
-x2.3 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2020, 'biom_log']
-x3 = output.common[output.common$lake == 'Storm' & output.common$year == 2018, 'biom_log']
-x3.2 = output.common[output.common$lake == 'Storm' & output.common$year == 2019, 'biom_log']
-x3.3 = output.common[output.common$lake == 'Storm' & output.common$year == 2020, 'biom_log']
-x4 = output.common[output.common$lake == 'Center' & output.common$year == 2018, 'biom_log']
-x4.2 = output.common[output.common$lake == 'Center' & output.common$year == 2019, 'biom_log']
-x4.3 = output.common[output.common$lake == 'Center' & output.common$year == 2020, 'biom_log']
-x5 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2018, 'biom_log']
-x5.2 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2019, 'biom_log']
-x5.3 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2020, 'biom_log']
-x6 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2018, 'biom_log']
-x6.2 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2019, 'biom_log']
-x6.3 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2020, 'biom_log']
-x7 = output.common[output.common$lake == 'Silver' & output.common$year == 2018, 'biom_log']
-x7.2 = output.common[output.common$lake == 'Silver' & output.common$year == 2019, 'biom_log']
-x7.3 = output.common[output.common$lake == 'Silver' & output.common$year == 2020, 'biom_log']
-
-
-Reduce(intersect, list(x1, x1.2, x1.3, 
-                       x2, x2.2, x2.3,
-                       x3, x3.2, x3.3,
-                       x4, x4.2, x4.3,
-                       x5, x5.2, x5.3,
-                       x6, x6.2, x6.3,
-                       x7, x7.2, x7.3)) # Identify common elements
-
-# No consistent bin #  
+# # Find common bin across all lakes 
+# x1 = output.common[output.common$lake == 'Blue' & output.common$year == 2018, 'biom_log']
+# x1.2 = output.common[output.common$lake == 'Blue' & output.common$year == 2019, 'biom_log']
+# x1.3 = output.common[output.common$lake == 'Blue' & output.common$year == 2020, 'biom_log']
+# x2 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2018, 'biom_log']
+# x2.2 = output.common[output.common$lake == 'south.Twin' & output.common$year == 2019, 'biom_log']
+# x2.3 = output.common[output.common$lake == 'South.Twin' & output.common$year == 2020, 'biom_log']
+# x3 = output.common[output.common$lake == 'Storm' & output.common$year == 2018, 'biom_log']
+# x3.2 = output.common[output.common$lake == 'Storm' & output.common$year == 2019, 'biom_log']
+# x3.3 = output.common[output.common$lake == 'Storm' & output.common$year == 2020, 'biom_log']
+# x4 = output.common[output.common$lake == 'Center' & output.common$year == 2018, 'biom_log']
+# x4.2 = output.common[output.common$lake == 'Center' & output.common$year == 2019, 'biom_log']
+# x4.3 = output.common[output.common$lake == 'Center' & output.common$year == 2020, 'biom_log']
+# x5 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2018, 'biom_log']
+# x5.2 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2019, 'biom_log']
+# x5.3 = output.common[output.common$lake == 'Five.Island' & output.common$year == 2020, 'biom_log']
+# x6 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2018, 'biom_log']
+# x6.2 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2019, 'biom_log']
+# x6.3 = output.common[output.common$lake == 'North.Twin' & output.common$year == 2020, 'biom_log']
+# x7 = output.common[output.common$lake == 'Silver' & output.common$year == 2018, 'biom_log']
+# x7.2 = output.common[output.common$lake == 'Silver' & output.common$year == 2019, 'biom_log']
+# x7.3 = output.common[output.common$lake == 'Silver' & output.common$year == 2020, 'biom_log']
+# 
+# 
+# Reduce(intersect, list(x1, x1.2, x1.3, 
+#                        x2, x2.2, x2.3,
+#                        x3, x3.2, x3.3,
+#                        x4, x4.2, x4.3,
+#                        x5, x5.2, x5.3,
+#                        x6, x6.2, x6.3,
+#                        x7, x7.2, x7.3)) # Identify common elements
+# 
+# # No consistent bin #  
 
 
 ## Linear fits of pelagic size spectrum by lake by year ## 
@@ -2620,8 +2621,6 @@ for ( i in 1:nrow(fits.yr.lm) ) {
 
 fits.yr.lm # Represents combined spring and summer data 
 
-
-
 height.bin.summary = fits.yr.lm %>% 
   select(year, lake, height.bin) %>% 
   summarize(mean = mean(height.bin), 
@@ -2648,6 +2647,24 @@ color_custom2 <- c( "purple", "royalblue2")
 output_for_plot = short.output %>% 
   left_join(., fits.yr.lm, by = c('year', 'lake'), all.x=T) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
 output_for_plot
+
+# Made after loading in previously created shortoutput_zp-miv_springsummer.csv dataframe - but running fits.yr.lm data from L2386 - 2640 
+# Get incorrect plot when load in previously derived fitsdata_zp-miv_long_springsummer.csv. Write csv functions are open in this script (not commented out) 
+# May have written an erroneus fits.yr.lm script accidentally when writing up plotting for Grace - will double check pre-defense; post exit seminar creation
+
+# current output for plot is correct, will write into specific data frame 
+# Currently Fig 2 and Fig 3 agree and are correct - there's a just a weird coding artifact I'm not catching - need to clean up code anyhow 
+
+# Code to generate commented out L2660 - L2667 below # 
+# short.output = read_csv('shortoutput_zp-miv_springsummer.csv')
+# ## Size Spectra Data ## 
+# short.output$lake = factor(short.output$lake, levels = c('Blue','Storm', 'South.Twin', 'Center', 'Five.Island', 'North.Twin','Silver'))
+# 
+# 
+# output_for_plot = short.output %>% 
+#   left_join(., fits.yr.lm, by = c('year', 'lake'), all.x=T) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
+# output_for_plot
+#write_csv(output_for_plot, 'sizespectra_fig2-fits_springsummer.csv')
 
 
 #### Size spectrum analysis with different spectra plotted ####
