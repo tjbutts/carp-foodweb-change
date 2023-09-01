@@ -1046,7 +1046,6 @@ library(tidyverse)
 # Start by making a data frame of the useful info from above
 Zoop.carp.dens<-data.frame(SAMPLE.ID, LAKE.NO, YEAR,  DOY, TAXON, COUNT)
 Zoop.carp.dens
-
 # Replace NAs with 0s 
 Zoop.carp.dens[is.na(Zoop.carp.dens)] <- 0
 Zoop.carp.dens = as_tibble(Zoop.carp.dens)
@@ -2608,7 +2607,8 @@ plot.data
 color_custom <- c("limegreen", "royalblue2", "gray50")
 color_custom2 <- c( "purple", "royalblue2")
 
-output_for_plot = left_join(short.output, fits.yr.lm, by = c('year', 'lake')) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
+output_for_plot = short.output %>% 
+  left_join(., fits.yr.lm, by = c('year', 'lake'), all.x=T) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
 output_for_plot
 
 # Made after loading in previously created shortoutput_zp-miv_springsummer.csv dataframe - but running fits.yr.lm data from L2386 - 2640 
@@ -2723,9 +2723,9 @@ fits.yr.lm
 setwd("C:/Users/tjbut/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 #write_csv(output.combined, 'raw_sizespec.csv')
 
-output.combined
+
 output.binned2 = output.combined %>%
-  group_by(year, lake, BINMID, BINMIN, BINMAX) %>%
+  group_by(year, lake, season, BINMID, BINMIN, BINMAX) %>%
   mutate(BINMID_LOG = log2(BINMID), BINMIN_LOG = log2(BINMIN), BINMAX_LOG = log2(BINMAX), DENS_LOG = log2(avg.density.areal)) %>%
   filter(lake != 'Storm')
 output.binned2

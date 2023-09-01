@@ -1,9 +1,9 @@
 # Succinct Code for Grace # 
 
-# Set working directory to wherever .csv file is # 
+# Set working directory to wherever .csv files are # 
 
-# Dataset 1 = sizespectra_fig2-fits_springsummer.csv
-# Datset 2 = fitsdata_summary-table.csv 
+# Dataset 1 = fitsdata_zp-miv_long_springsummer.csv
+# Datset 2 = shortoutput_zp-miv_springsummer.csv
 
 # Plotting Figure 2 #=====================
 #### Size Spectrum analysis of all lakes with slopes ####
@@ -11,7 +11,12 @@
 library(ggplot2)
 library(tidyverse)
 
-output_for_plot = read_csv('sizespectra_output-for-plot.csv') # Data used to plot figure 2 
+fits = read_csv('fitsdata_zp-miv_long_springsummer.csv') # summary table of size spectra fits 
+short.output = read_csv('shortoutput_zp-miv_springsummer.csv') # plotting data 
+
+output_for_plot = short.output %>% 
+  left_join(., fits, by = c('year', 'lake')) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
+output_for_plot
 output_for_plot$lake = factor(output_for_plot$lake, levels = c('Blue','Storm', 'South.Twin', 'Center', 'Five.Island', 'North.Twin','Silver'))
 
 # Output graphs with linear fits # 
@@ -68,7 +73,7 @@ library(tidyverse)
 library(lubridate)
 
 # Datasets you'll need # 
-fits_dat = read_csv('fitsdata_summary-table.csv') # For Figure 3 - longer version of short output with all fits and slopes 
+fits_dat = read_csv('fitsdata_zp-miv_long_springsummer.csv') # For Figure 3 - longer version of short output with all fits and slopes 
 fits_dat 
 
 
