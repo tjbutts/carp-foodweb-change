@@ -1,24 +1,38 @@
 ## Step 2_Size Spectra Analysis ##==============================
 
+# Install sizeSpectra package from Edwards et al. 2017 # 
+if (!require(devtools)) install.packages('devtools')
+library(devtools)
+
+install.packages('sizeSpectra 1.0.0.0.tar.gz', repos = NULL)
+library(sizeSpectra)
+
+if (!require(tidyverse)) install.packages('tidyverse')
+library(tidyverse)
+#browseVignettes("sizeSpectra")
+
 
 # Load in SSA dataset #===========================
 output = read_csv('SSA start_zoop.miv-biomass.csv')
 output
 
 # Replace lake number with lake name #
-levels(output$lake) = c(levels(output$lake), 'Blue','Center', 
-                         'Five.Island', 'North.Twin', 
-                         'Silver', 'Storm', 'South.Twin')
+levels(output$lake) = c(levels(output$lake), 'Blue', 'Center', 
+                         'Five Island', 'North Twin', 
+                         'Silver', 'Storm', 'South Twin')
 
 output$lake[output$lake == '12'] <- 'Blue'
 output$lake[output$lake == '19'] <- 'Center' 
-output$lake[output$lake == '36'] <- 'Five.Island' 
-output$lake[output$lake == '90'] <- 'North.Twin'
+output$lake[output$lake == '36'] <- 'Five Island' 
+output$lake[output$lake == '90'] <- 'North Twin'
 output$lake[output$lake == '105'] <- 'Silver'
 output$lake[output$lake == '113'] <- 'Storm'
-output$lake[output$lake == '406'] <- 'South.Twin'
+output$lake[output$lake == '406'] <- 'South Twin'
 output
 
+# Remove Blue Lake - geologically distinct, almost no BMB # 
+output = filter(output, lake != 'Blue')
+output
 
 ## Calculate the number of log2 bins, taken from Edwards et al. 2017 - assign bins
 log2bins_butts = function(x = NULL, counts = NULL)
@@ -146,7 +160,7 @@ fits.yr.lm
 ## Set up a short dataframe for easier export ## 
 short.output = setNames ( data.frame ( matrix (NA, ncol = 6, nrow = 0) ), c( 'year', 'lake',  'DENS_LOG', 'BINMID_LOG', 'DATAUSEDINFIT') )
 
-short.output$lake = factor ( short.output$lake, levels = c('Blue','Storm', 'South.Twin', 'Center', 'Five.Island', 'North.Twin','Silver'))
+short.output$lake = factor ( short.output$lake, levels = c('Storm', 'South Twin', 'Center', 'Five Island', 'North Twin','Silver'))
 
 # Remove lake years with no data 
 #fits.yr.lm = fits.yr.lm %>% filter(!row_number() %in% c(2,16,30)) 
@@ -210,7 +224,7 @@ setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 
 
 ## Size Spectra Data ## 
-short.output$lake = factor(short.output$lake, levels = c('Blue','Storm', 'South.Twin', 'Center', 'Five.Island', 'North.Twin','Silver'))
+short.output$lake = factor(short.output$lake, levels = c('Blue','Storm', 'South Twin', 'Center', 'Five Island', 'North Twin','Silver'))
 plot.data = short.output 
 plot.data
 color_custom <- c("limegreen", "royalblue2", "gray50")
@@ -271,15 +285,15 @@ ref_col_18 = rgb(91, 83, 147, max = 255, alpha = 100)
 ref_col_19 = rgb(91, 83, 147, max = 255, alpha = 180)
 ref_col_20 = rgb(91, 83, 147, max = 255, alpha = 255)
 
-# null, removal, removal # North Twin, Silver
-nrr_col_18 = rgb(43, 73, 112, max = 255, alpha = 100) 
-nrr_col_19 = rgb(43, 73, 112, max = 255, alpha = 180)
-nrr_col_20 = rgb(43, 73, 112, max = 255, alpha = 255)
-
 # removal, removal, null # Center, Five Island 
 rrn_col_18 = rgb(37, 111, 92, max = 255, alpha = 100) 
 rrn_col_19 = rgb(37, 111, 92, max = 255, alpha = 180)
 rrn_col_20 = rgb(37, 111, 92, max = 255, alpha = 255)
+
+# null, removal, removal # North Twin, Silver
+nrr_col_18 = rgb(77, 77, 77, max = 255, alpha = 100) 
+nrr_col_19 = rgb(77, 77, 77, max = 255, alpha = 180)
+nrr_col_20 = rgb(77, 77, 77, max = 255, alpha = 255)
 
 # transparent 
 transparent = rgb(255,255,255, max=255, alpha = 0)
@@ -294,11 +308,9 @@ plot_ssa2 =
   ylim (2, 22) +
   xlim (-35, 5) +
   facet_grid(year ~ lake) + 
-  labs(title = 'Spring + Summer Zooplankton') +
-  
   labs( x = expression ( paste ( 'Log'[2], 'Dry Weight Biomass (g)') ), 
         y = expression ( paste ( 'Log'[2], 'Abundance (Individuals/m'^2,')' ) ) ) +
-  scale_color_manual(values = c(ref_col_20, ref_col_19, ref_col_18,
+  scale_color_manual(values = c(ref_col_20, ref_col_19,
                                 rrn_col_20, rrn_col_18,
                                 nrr_col_20, nrr_col_18)) +
   theme_bw() + 
@@ -322,7 +334,7 @@ fit.data = output_for_plot %>%
   arrange(lake, year)
 fit.data
 
-write_csv(fits.yr.lm, 'fitsdata_zp-miv_long_springsummer.csv')
-write_csv(short.output, 'shortoutput_zp-miv_springsummer.csv')
+#write_csv(fits.yr.lm, 'fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
+#write_csv(short.output, 'shortoutput_zp-miv_springsummer_Blue-rm.csv')
 
 fits.yr.lm
