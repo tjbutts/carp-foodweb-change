@@ -135,7 +135,7 @@ output.combined = output.binned %>%
   select(year, lake, BINMID, BINMIN, BINMAX, avg.density.areal, BINMID_LOG, BINMIN_LOG, BINMAX_LOG, DENS_LOG)
 output.combined
 
-# Get Min and Max of weight bins # 
+# Get Min and Max of weight bins # For Table 2 # 
 minmax_bins = output.combined %>%
   group_by(lake, year) %>% 
   summarize(
@@ -310,7 +310,7 @@ plot_ssa2 =
   facet_grid(year ~ lake) + 
   labs( x = expression ( paste ( 'Log'[2], 'Dry Weight Biomass (g)') ), 
         y = expression ( paste ( 'Log'[2], 'Abundance (Individuals/m'^2,')' ) ) ) +
-  scale_color_manual(values = c(ref_col_20, ref_col_19,
+  scale_color_manual(values = c(ref_col_20, ref_col_18,
                                 rrn_col_20, rrn_col_18,
                                 nrr_col_20, nrr_col_18)) +
   theme_bw() + 
@@ -338,3 +338,8 @@ fit.data
 #write_csv(short.output, 'shortoutput_zp-miv_springsummer_Blue-rm.csv')
 
 fits.yr.lm
+
+# If want to rerun with only summer data excluding spring (as shown in supplemental) 
+# Uncomment the following two lines and replace the 'short_output' object on Line 234
+# with the .csv below 
+  # read_csv('shortoutput_zp-miv_summeronly.csv')

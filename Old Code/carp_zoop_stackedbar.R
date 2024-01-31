@@ -3788,4 +3788,3 @@ taxa2 = rev(c(expression(italic('Daphnia')), 'Misc. Cladocerans',
 ramp1= c(dap, clad, bos, chy)
 legend(0.1,5.5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
        col = rev(ramp1))
-

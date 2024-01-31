@@ -1,9 +1,11 @@
-## Macroinvertebrate Community - Stacked Bar graph ##
+##Step 5 _ Macroinvertebrate Community - Stacked Bar graph ##
 
 # Read in the relevant data and packages
 # ========= PACKAGES ========== #
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
+library(here)
+
 
 miv = read_csv('MIV_biomass.csv') %>% 
   select(lake, year, taxa, density, miv_arealbiomass_mg.m2) %>% 
@@ -53,17 +55,17 @@ total.miv
 
 
 # MIV Community - Annual # ==========================
-blue18 = miv.dat %>% 
-  filter(lake == 'Blue') %>% 
-  filter(year == '2018')  
-  
-blue19 = miv.dat %>% 
-  filter(lake == 'Blue') %>% 
-  filter(year == '2019') 
-  
-blue20 = miv.dat %>% 
-  filter(lake == 'Blue') %>% 
-  filter(year == '2020') 
+# blue18 = miv.dat %>% 
+#   filter(lake == 'Blue') %>% 
+#   filter(year == '2018')  
+#   
+# blue19 = miv.dat %>% 
+#   filter(lake == 'Blue') %>% 
+#   filter(year == '2019') 
+#   
+# blue20 = miv.dat %>% 
+#   filter(lake == 'Blue') %>% 
+#   filter(year == '2020') 
   
 
 south.twin18 = miv.dat %>% 
@@ -197,124 +199,124 @@ order = as.data.frame(order)
 fill.taxa = cbind(group, year, b.mean, sd.mean, order)
 fill.taxa
 
-# Blue # 
-blue.18.sum = blue18 %>%
-  group_by(group, year) %>% 
-  summarize(sum_biom = sum(biomass)) %>% 
-  ungroup() %>% 
-  group_by(group, year) %>%
-  summarize(b.mean = mean(sum_biom), 
-            sd.mean = sd(sum_biom)) %>% 
-  ungroup() %>% 
-  mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
-                           .$group %in% c("Misc.Diptera") ~ '2',
-                           .$group %in% c('Worms') ~ '3', 
-                           .$group %in% c('Gastropoda') ~ '4', 
-                           .$group %in% c('Bivalvia') ~ '5', 
-                           .$group %in% c('Dreissenidae') ~ '6', 
-                           .$group %in% c('Ephemeroptera') ~ '7', 
-                           .$group %in% c('Trichoptera') ~ '8', 
-                           .$group %in% c('Megaloptera') ~ '9', 
-                           .$group %in% c('Gammaridae') ~ '10')) %>% 
-  mutate(lake = 'Blue') %>%
-  arrange(order)
-blue.18.sum
-
-blue.18.fill = fill.taxa %>%
-  filter(year == '2018', 
-         order == 6 | order == 7 | order == 8 
-         | order == 9 | order == 10)  
-blue.18.fill$lake = 'Blue'
-blue.18.fill
-
-blue.18 = rbind(blue.18.sum, blue.18.fill) %>% 
-  rename(b.2018 = b.mean)
-blue.18
-
-blue19
-
-blue19.sum = blue19 %>%
-  group_by(lake, group, year) %>% 
-  summarize(sum_biom = sum(biomass)) %>% 
-  ungroup() %>% 
-  group_by(group, year) %>%
-  summarize(b.mean = mean(sum_biom), 
-            sd.mean = sd(sum_biom)) %>% 
-  ungroup() %>% 
-  mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
-                           .$group %in% c("Misc.Diptera") ~ '2',
-                           .$group %in% c('Worms') ~ '3', 
-                           .$group %in% c('Gastropoda') ~ '4', 
-                           .$group %in% c('Bivalvia') ~ '5', 
-                           .$group %in% c('Dreissenidae') ~ '6', 
-                           .$group %in% c('Ephemeroptera') ~ '7', 
-                           .$group %in% c('Trichoptera') ~ '8', 
-                           .$group %in% c('Megaloptera') ~ '9', 
-                           .$group %in% c('Gammaridae') ~ '10')) %>% 
-  mutate(lake = 'Blue') %>%
-  arrange(order)
-blue19.sum
-
-blue.19.fill = fill.taxa %>%
-  filter(year == '2019', 
-         order == 5 | order == 6 | order == 7 | order == 8 
-         | order == 9 | order == 10)  
-blue.19.fill$lake = 'Blue'
-blue.19.fill
-
-blue.19 = rbind(blue19.sum, blue.19.fill) %>% 
-  rename(b.2019 = b.mean)
-blue.19
-
-blue20
-
-blue20.sum = blue20 %>%
-  group_by(lake, group, year) %>% 
-  summarize(sum_biom = sum(biomass)) %>% 
-  ungroup() %>% 
-  group_by(group, year) %>%
-  summarize(b.mean = mean(sum_biom), 
-            sd.mean = sd(sum_biom)) %>% 
-  ungroup() %>% 
-  mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
-                           .$group %in% c("Misc.Diptera") ~ '2',
-                           .$group %in% c('Worms') ~ '3', 
-                           .$group %in% c('Gastropoda') ~ '4', 
-                           .$group %in% c('Bivalvia') ~ '5', 
-                           .$group %in% c('Dreissenidae') ~ '6', 
-                           .$group %in% c('Ephemeroptera') ~ '7', 
-                           .$group %in% c('Trichoptera') ~ '8', 
-                           .$group %in% c('Megaloptera') ~ '9', 
-                           .$group %in% c('Gammaridae') ~ '10')) %>% 
-  mutate(lake = 'Blue') %>%
-  arrange(order)
-blue20.sum
-
-blue.20.fill = fill.taxa %>%
-  filter(year == '2020', 
-         order == 2 | order == 6 | order == 7 | order == 8 
-         | order == 9 | order == 10)  
-blue.20.fill$lake = 'Blue'
-blue.20.fill
-
-blue.20 = rbind(blue20.sum, blue.20.fill) %>% 
-  rename(b.2020 = b.mean) %>% 
-  mutate(order = as.numeric(order)) %>%
-  arrange(order)
-blue.20
-
-blue.bar = cbind(blue.18, blue.19, blue.20) %>% 
-  subset(select=which(!duplicated(names(.)))) %>%
-  select(group, b.2018, b.2019, b.2020)
-blue.bar
-
-
-blue.perc = blue.bar %>%
-  mutate(p.2018 = (b.2018/sum(b.2018)*100), 
-         p.2019 = (b.2019/sum(b.2019)*100), 
-         p.2020 = (b.2020/sum(b.2020)*100)) %>%
-  select(group, p.2018, p.2019, p.2020)
-blue.perc
+# # Blue # 
+# blue.18.sum = blue18 %>%
+#   group_by(group, year) %>% 
+#   summarize(sum_biom = sum(biomass)) %>% 
+#   ungroup() %>% 
+#   group_by(group, year) %>%
+#   summarize(b.mean = mean(sum_biom), 
+#             sd.mean = sd(sum_biom)) %>% 
+#   ungroup() %>% 
+#   mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
+#                            .$group %in% c("Misc.Diptera") ~ '2',
+#                            .$group %in% c('Worms') ~ '3', 
+#                            .$group %in% c('Gastropoda') ~ '4', 
+#                            .$group %in% c('Bivalvia') ~ '5', 
+#                            .$group %in% c('Dreissenidae') ~ '6', 
+#                            .$group %in% c('Ephemeroptera') ~ '7', 
+#                            .$group %in% c('Trichoptera') ~ '8', 
+#                            .$group %in% c('Megaloptera') ~ '9', 
+#                            .$group %in% c('Gammaridae') ~ '10')) %>% 
+#   mutate(lake = 'Blue') %>%
+#   arrange(order)
+# blue.18.sum
+# 
+# blue.18.fill = fill.taxa %>%
+#   filter(year == '2018', 
+#          order == 6 | order == 7 | order == 8 
+#          | order == 9 | order == 10)  
+# blue.18.fill$lake = 'Blue'
+# blue.18.fill
+# 
+# blue.18 = rbind(blue.18.sum, blue.18.fill) %>% 
+#   rename(b.2018 = b.mean)
+# blue.18
+# 
+# blue19
+# 
+# blue19.sum = blue19 %>%
+#   group_by(lake, group, year) %>% 
+#   summarize(sum_biom = sum(biomass)) %>% 
+#   ungroup() %>% 
+#   group_by(group, year) %>%
+#   summarize(b.mean = mean(sum_biom), 
+#             sd.mean = sd(sum_biom)) %>% 
+#   ungroup() %>% 
+#   mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
+#                            .$group %in% c("Misc.Diptera") ~ '2',
+#                            .$group %in% c('Worms') ~ '3', 
+#                            .$group %in% c('Gastropoda') ~ '4', 
+#                            .$group %in% c('Bivalvia') ~ '5', 
+#                            .$group %in% c('Dreissenidae') ~ '6', 
+#                            .$group %in% c('Ephemeroptera') ~ '7', 
+#                            .$group %in% c('Trichoptera') ~ '8', 
+#                            .$group %in% c('Megaloptera') ~ '9', 
+#                            .$group %in% c('Gammaridae') ~ '10')) %>% 
+#   mutate(lake = 'Blue') %>%
+#   arrange(order)
+# blue19.sum
+# 
+# blue.19.fill = fill.taxa %>%
+#   filter(year == '2019', 
+#          order == 5 | order == 6 | order == 7 | order == 8 
+#          | order == 9 | order == 10)  
+# blue.19.fill$lake = 'Blue'
+# blue.19.fill
+# 
+# blue.19 = rbind(blue19.sum, blue.19.fill) %>% 
+#   rename(b.2019 = b.mean)
+# blue.19
+# 
+# blue20
+# 
+# blue20.sum = blue20 %>%
+#   group_by(lake, group, year) %>% 
+#   summarize(sum_biom = sum(biomass)) %>% 
+#   ungroup() %>% 
+#   group_by(group, year) %>%
+#   summarize(b.mean = mean(sum_biom), 
+#             sd.mean = sd(sum_biom)) %>% 
+#   ungroup() %>% 
+#   mutate(order = case_when(.$group %in% c('Chironomidae') ~ "1",
+#                            .$group %in% c("Misc.Diptera") ~ '2',
+#                            .$group %in% c('Worms') ~ '3', 
+#                            .$group %in% c('Gastropoda') ~ '4', 
+#                            .$group %in% c('Bivalvia') ~ '5', 
+#                            .$group %in% c('Dreissenidae') ~ '6', 
+#                            .$group %in% c('Ephemeroptera') ~ '7', 
+#                            .$group %in% c('Trichoptera') ~ '8', 
+#                            .$group %in% c('Megaloptera') ~ '9', 
+#                            .$group %in% c('Gammaridae') ~ '10')) %>% 
+#   mutate(lake = 'Blue') %>%
+#   arrange(order)
+# blue20.sum
+# 
+# blue.20.fill = fill.taxa %>%
+#   filter(year == '2020', 
+#          order == 2 | order == 6 | order == 7 | order == 8 
+#          | order == 9 | order == 10)  
+# blue.20.fill$lake = 'Blue'
+# blue.20.fill
+# 
+# blue.20 = rbind(blue20.sum, blue.20.fill) %>% 
+#   rename(b.2020 = b.mean) %>% 
+#   mutate(order = as.numeric(order)) %>%
+#   arrange(order)
+# blue.20
+# 
+# blue.bar = cbind(blue.18, blue.19, blue.20) %>% 
+#   subset(select=which(!duplicated(names(.)))) %>%
+#   select(group, b.2018, b.2019, b.2020)
+# blue.bar
+# 
+# 
+# blue.perc = blue.bar %>%
+#   mutate(p.2018 = (b.2018/sum(b.2018)*100), 
+#          p.2019 = (b.2019/sum(b.2019)*100), 
+#          p.2020 = (b.2020/sum(b.2020)*100)) %>%
+#   select(group, p.2018, p.2019, p.2020)
+# blue.perc
 
 # Storm # 
 storm.18.sum = storm18 %>%
@@ -1068,8 +1070,10 @@ windows(height = 6, width = 8)
 #width = 6)
 library(paletteer)
 library(unikn)
-ramp = paletteer_d('unikn::pal_unikn_ppt', n = 10)
+ramp = c('#009AD1FF', '#59B6DCFF', '#A0D3E6FF', '#C8E5EFFF', '#D4F1F4', '#E5E5E5FF', '#CCCCCCFF',
+         '#999999FF', '#666666FF', '#000000FF')
 ramp 
+
 
 # transparent 
 transparent = rgb(255,255,255, max=255, alpha = 0)
@@ -1083,25 +1087,36 @@ par(tcl = -0.25)
 par(mgp = c(2, 0.6, 0))
 
 # Reference # 
-barplot(as.matrix(blue.perc[1:10,2:4]), col=ramp, 
-        names.arg = c('2018', '2019', '2020'), border= T, xaxt = 'n')
-box()
+# barplot(as.matrix(blue.perc[1:10,2:4]), col=ramp, 
+#         names.arg = c('2018', '2019', '2020'), border= T, xaxt = 'n')
+# box()
+
+# axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+# mtext(side = 3, 'Blue')
+
+barplot(as.matrix(storm.perc[1:10,2:4]), col=ramp,
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 mtext(side =2, line=3, 'MIV Biomass (%)', cex=1)
 mtext(side =2, line=1.8, 'Reference', cex =1)
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
-mtext(side = 3, 'Blue')
-
-barplot(as.matrix(storm.perc[1:10,2:4]), col=ramp, col.axis = transparent,
-        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
 box()
 mtext(side = 3, 'Storm')
 
 barplot(as.matrix(south.twin.perc[1:10,2:4]), col=ramp, col.axis = transparent, 
-        names.arg = c('2018', '2019', '2020'), border=T)
-axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n')
+axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T )
 box()
 mtext(side = 3, 'South Twin')
+
+#empty plot 
+plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
+     ylab = "", xlim = c(0, 5), 
+     ylim = c(0, 5), col.axis = transparent, bty = 'n')
+taxa2 = rev(c('Dreissenidae', 'Ephemeroptera', 'Trichoptera', 'Megaloptera', 'Gammaridae'))
+ramp3 = ramp[6:10]
+legend(0,4.4, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
+       col = rev(ramp3), title = 'Macroinvertebrate Taxa')
+
 
 # RRN # 
 barplot(as.matrix(center.perc[1:10,2:4]), col=ramp, 
@@ -1122,10 +1137,11 @@ mtext(side = 3, 'Five Island')
 plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
      ylab = "", xlim = c(0, 5), 
      ylim = c(0, 5), col.axis = transparent, bty = 'n')
-taxa2 = rev(c('Dreissenidae', 'Ephemeroptera', 'Trichoptera', 'Megaloptera', 'Gammaridae'))
-ramp3 = ramp[6:10]
-legend(0,4.4, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
-       col = rev(ramp3), title = 'Macroinvertebrate Taxa')
+taxa2 = rev(c('Chironomidae', 'Misc.Diptera', 'Worms', 'Gastropoda', 'Bivalvia'))
+ramp2 = ramp[1:5]
+legend(0.3,5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
+       col = rev(ramp2))
+
 
 # NRR
 barplot(as.matrix(north.twin.perc[1:10,2:4]), col=ramp,
@@ -1135,22 +1151,23 @@ mtext(side =2, line=3, 'MIV Biomass (%)', cex=1)
 mtext(side =2, line=1.8, 'Removal 2019 - 2020', cex =1)
 axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
 mtext(side = 3, 'North Twin')
+mtext(side = 1, 'Year', line = 2)
 
 barplot(as.matrix(silver.perc[1:10,2:4]), col=ramp, col.axis = transparent,
         names.arg = c('2018', '2019', '2020'), border=T);
 box()
 axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
-mtext(side = 1, line = 1.8, 'Year')
+mtext(side = 1, line = 2, 'Year')
 mtext(side = 3, 'Silver')
 
 #empty plot 
-plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
-     ylab = "", xlim = c(0, 5), 
-     ylim = c(0, 5), col.axis = transparent, bty = 'n')
-taxa2 = rev(c('Chironomidae', 'Misc.Diptera', 'Worms', 'Gastropoda', 'Bivalvia'))
-ramp2 = ramp[1:5]
-legend(0.3,5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
-       col = rev(ramp2))
+# plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
+#      ylab = "", xlim = c(0, 5), 
+#      ylim = c(0, 5), col.axis = transparent, bty = 'n')
+# taxa2 = rev(c('Chironomidae', 'Misc.Diptera', 'Worms', 'Gastropoda', 'Bivalvia'))
+# ramp2 = ramp[1:5]
+# legend(0.3,5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
+#        col = rev(ramp2))
 
 # MIV Stacked Biomass #====================
 
@@ -1162,14 +1179,15 @@ windows(height = 6, width = 8)
 #width = 6)
 library(paletteer)
 library(unikn)
-ramp = paletteer_d('unikn::pal_unikn_ppt', n = 10)
+ramp = c('#009AD1FF', '#59B6DCFF', '#A0D3E6FF', '#C8E5EFFF', '#D4F1F4', '#E5E5E5FF', '#CCCCCCFF',
+         '#999999FF', '#666666FF', '#000000FF')
 ramp 
 
 # transparent 
 transparent = rgb(255,255,255, max=255, alpha = 0)
 
-xax = barplot(as.matrix(south.twin.bar[1:8,2:4]), col=ramp, col.axis = transparent, 
-              names.arg = c('2018', '2019', '2020'), border=T)
+# xax = barplot(as.matrix(south.twin.bar[1:8,2:4]), col=ramp, col.axis = transparent, 
+#               names.arg = c('2018', '2019', '2020'), border=T)
 
 # Set dimensions for figure array # 
 par(mfrow =c(3,3), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
@@ -1177,35 +1195,25 @@ par(tcl = -0.25)
 par(mgp = c(2, 0.6, 0))
 
 # Reference # 
-barplot(as.matrix(blue.bar[1:10,2:4]), col=ramp,
-        names.arg = c('2018', '2019', '2020'), border= T, xaxt = 'n')
-box()
-mtext(side =2, line=3, 'MIV Biomass', cex=1)
+# barplot(as.matrix(blue.bar[1:10,2:4]), col=ramp,
+#         names.arg = c('2018', '2019', '2020'), border= T, xaxt = 'n', ylim = c(0, 5000))
+# box()
+# 
+# axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+
+barplot(as.matrix(storm.bar[1:10,2:4]), col=ramp,ylim = c(0, 25000), col.axis = 'maroon',
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
+mtext(side=2, line=3, cex = 1, expression('MIV Biomass'~"(mg"~'m'^-2*")"))
 mtext(side =2, line=1.8, 'Reference', cex =1)
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
-
-barplot(as.matrix(storm.bar[1:10,2:4]), col=ramp, 
-        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
+mtext(side = 3, 'Storm')
 axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
 box()
 
-barplot(as.matrix(south.twin.bar[1:10,2:4]), col=ramp, 
-        names.arg = c('2018', '2019', '2020'), border=T)
-axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
-box()
-
-# RRN # 
-barplot(as.matrix(center.bar[1:10,2:4]), col=ramp,
-        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
-box()
+barplot(as.matrix(south.twin.bar[1:10,2:4]), col=ramp, ylim = c(0,5000),
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n')
 axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
-mtext(side =2, line=3, 'MIV Biomass', cex=1)
-mtext(side =2, line=1.8, 'Removal 2018 - 2019', cex =1)
-
-barplot(as.matrix(five.island.bar[1:10,2:4]), col=ramp,
-        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+mtext(side = 3, 'South Twin')
 
 #empty plot 
 plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
@@ -1216,18 +1224,22 @@ ramp3 = ramp[6:10]
 legend(0,4.4, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
        col = rev(ramp3), title = 'Macroinvertebrate Taxa')
 
-# NRR
-barplot(as.matrix(north.twin.bar[1:10,2:4]), col = ramp,
-        names.arg = c('2018', '2019', '2020'), border=T);
+# RRN # 
+barplot(as.matrix(center.bar[1:10,2:4]), col=ramp, ylim = c(0,5000),
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
-mtext(side =2, line=3, 'MIV Biomass', cex=1)
-mtext(side =2, line=1.8, 'Removal 2019 - 2020', cex =1)
-axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
+axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+mtext(side=2, line=3, cex = 1, expression('MIV Biomass'~"(mg"~'m'^-2*")"))
+mtext(side =2, line=1.8, 'Removal 2018 - 2019', cex =1)
+mtext(side = 3, 'Center')
 
-barplot(as.matrix(silver.bar[1:10,2:4]), col=ramp, 
-        names.arg = c('2018', '2019', '2020'), border=T);
+
+barplot(as.matrix(five.island.bar[1:10,2:4]), col=ramp, ylim = c(0,5000),
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
-axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
+axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+mtext(side = 3, 'Five Island')
+
 
 #empty plot 
 plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
@@ -1237,6 +1249,25 @@ taxa2 = rev(c('Chironomidae', 'Misc.Diptera', 'Worms', 'Gastropoda', 'Bivalvia')
 ramp2 = ramp[1:5]
 legend(0.3,5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
        col = rev(ramp2))
+
+
+# NRR
+barplot(as.matrix(north.twin.bar[1:10,2:4]), col = ramp,ylim = c(0,5000), 
+        names.arg = c('2018', '2019', '2020'), border=T);
+box()
+mtext(side=2, line=3, cex = 1, expression('MIV Biomass'~"(mg"~'m'^-2*")"))
+mtext(side =2, line=1.8, 'Removal 2019 - 2020', cex =1)
+axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+mtext(side = 3, 'North Twin')
+mtext(side = 1, line =2, 'Year')
+
+barplot(as.matrix(silver.bar[1:10,2:4]), col=ramp, 
+        names.arg = c('2018', '2019', '2020'), border=T);
+box()
+axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+mtext(side = 3, 'Silver')
+mtext(side = 1, line =2, 'Year')
+
 
 
 

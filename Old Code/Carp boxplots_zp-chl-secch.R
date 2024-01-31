@@ -172,7 +172,7 @@ chla = carp.wq %>%
 chla
 
 # Window for checking plot 
-windows(height = 6, width = 6) 
+windows(height = 5.5, width = 4) 
 
 # Will create plot in whatever file path you set  
 #pdf(file = "C:/Users/tjbut/Box Sync/Butts_Dissertation/Hort Chapter/Figures/Hort_Figure3.pdf", 
@@ -182,58 +182,82 @@ windows(height = 6, width = 6)
 max(chla$chl_ugL) # 160
 min(chla$chl_ugL) # 0.4 
 
-# Plot # 
+# ========= PLOTTING COLORS ===== # 
+# Output graphs with linear fits # 
 # Reference - no removal # Blue, South Twin, Storm
 ref_col_18 = rgb(91, 83, 147, max = 255, alpha = 100) 
 ref_col_19 = rgb(91, 83, 147, max = 255, alpha = 180)
 ref_col_20 = rgb(91, 83, 147, max = 255, alpha = 255)
-
-# null, removal, removal # North Twin, Silver
-nrr_col_18 = rgb(43, 73, 112, max = 255, alpha = 100) 
-nrr_col_19 = rgb(43, 73, 112, max = 255, alpha = 180)
-nrr_col_20 = rgb(43, 73, 112, max = 255, alpha = 255)
 
 # removal, removal, null # Center, Five Island 
 rrn_col_18 = rgb(37, 111, 92, max = 255, alpha = 100) 
 rrn_col_19 = rgb(37, 111, 92, max = 255, alpha = 180)
 rrn_col_20 = rgb(37, 111, 92, max = 255, alpha = 255)
 
+# null, removal, removal # North Twin, Silver
+nrr_col_18 = rgb(77, 77, 77, max = 255, alpha = 100) 
+nrr_col_19 = rgb(77, 77, 77, max = 255, alpha = 180)
+nrr_col_20 = rgb(77, 77, 77, max = 255, alpha = 255)
+
 # Set dimensions for figure array # 
-par(mfrow =c(3,3), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
+par(mfrow =c(3,2), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
 par(tcl = -0.25)
 par(mgp = c(2, 0.6, 0))
 
 
 # BLUE # 
-blue_dat = chla %>% 
-  filter(lake == 'Blue') 
-blue_dat
-
-boxplot(log(chl_ugL)~year, data = blue_dat, col = ref_col_20, ylim = c(log(0.1), log(175)), yaxt = 'n', xaxt = 'n')
-stripchart(log(chl_ugL) ~ year, vertical = TRUE, data = blue_dat, ylim = c(log(0.1), log(175)), yaxt = 'n',
-           method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
-axis(side=2,
-     at=c(log(0.1),log(0.2),log(0.3),log(0.4),log(0.5),log(0.6),log(0.7),log(0.8),log(0.9),
-          log(1),log(2),log(3),log(4),log(5),log(6),log(7),log(8),log(9),log(10),
-          log(20),log(30),log(40),log(50),log(60),log(70),log(80),log(90),log(100), 
-          log(200)), #Where the tick marks should be drawn
-     labels = c('0.1', '', '', '', '', '', '', '', '', 
-                '1', '', '', '', '', '', '', '', '', '10', '', '','','','','','','','100','200'),
-     las=0)
-axis(side=1, 
-     at=c(1,2,3), 
-     labels = F)
-mtext(expression(Chlorophyll~`-`~italic(a)), side = 2, line = 3)
-mtext(expression(Concentration~`(`~mu~g~L^-1~`)`), side =2, line = 1.8)
-mtext('Blue', side = 3, line = 0)
+# blue_dat = chla %>% 
+#   filter(lake == 'Blue') 
+# blue_dat
+# 
+# boxplot(log(chl_ugL)~year, data = blue_dat, col = ref_col_20, ylim = c(log(0.1), log(175)), yaxt = 'n', xaxt = 'n')
+# stripchart(log(chl_ugL) ~ year, vertical = TRUE, data = blue_dat, ylim = c(log(0.1), log(175)), yaxt = 'n',
+#            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
+# axis(side=2,
+#      at=c(log(0.1),log(0.2),log(0.3),log(0.4),log(0.5),log(0.6),log(0.7),log(0.8),log(0.9),
+#           log(1),log(2),log(3),log(4),log(5),log(6),log(7),log(8),log(9),log(10),
+#           log(20),log(30),log(40),log(50),log(60),log(70),log(80),log(90),log(100), 
+#           log(200)), #Where the tick marks should be drawn
+#      labels = c('0.1', '', '', '', '', '', '', '', '', 
+#                 '1', '', '', '', '', '', '', '', '', '10', '', '','','','','','','','100','200'),
+#      las=0)
+# axis(side=1, 
+#      at=c(1,2,3), 
+#      labels = F)
+# mtext(expression(Chlorophyll~`-`~italic(a)), side = 2, line = 3)
+# mtext(expression(Concentration~`(`~mu~g~L^-1~`)`), side =2, line = 1.8)
+# mtext('Blue', side = 3, line = 0)
 
 # STORM # 
 storm.su_dat = chla %>%
   filter(lake == 'Storm') 
 storm.su_dat
 
-boxplot(log(chl_ugL)~year, data = storm.su_dat, col = ref_col_19, ylim = c(log(0.1), log(175)), yaxt = 'n', xaxt = 'n')
+boxplot(log(chl_ugL)~year, data = storm.su_dat, col = ref_col_20, ylim = c(log(0.1), log(175)), yaxt = 'n', xaxt = 'n')
 stripchart(log(chl_ugL) ~ year, vertical = TRUE, data = storm.su_dat, ylim = c(log(0.1), log(175)), yaxt = 'n',
+           method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
+axis(side=2,
+     at=c(log(0.1),log(0.2),log(0.3),log(0.4),log(0.5),log(0.6),log(0.7),log(0.8),log(0.9),
+          log(1),log(2),log(3),log(4),log(5),log(6),log(7),log(8),log(9),log(10),
+          log(20),log(30),log(40),log(50),log(60),log(70),log(80),log(90),log(100),
+          log(200)), #Where the tick marks should be drawn
+     labels = c('0.1', '', '', '', '', '', '', '', '',
+                '1', '', '', '', '', '', '', '', '', '10', '', '','','','','','','','100','200'),
+     las=0)
+axis(side = 1, 
+     at = c(1,2,3), 
+     labels = F)
+mtext(expression(Chlorophyll*`-`*italic(a)), side = 2, line = 3, cex = 0.9)
+mtext(expression(Concentration~`(`*mu*g~L^-1*`)`), side =2, line = 1.8, cex = 0.9)
+mtext('Storm', side = 3, line = 0)
+
+# SOUTH TWIN # 
+south.twin_dat = chla %>%
+  filter(lake == 'South Twin') 
+south.twin_dat
+
+boxplot(log(chl_ugL)~year, data = south.twin_dat, col = ref_col_18, ylim = c(log(0.1), log(175)), yaxt = 'n', xaxt = 'n')
+stripchart(log(chl_ugL) ~ year, vertical = TRUE, data = south.twin_dat, ylim = c(log(0.1), log(175)), yaxt = 'n',
            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
 axis(side=2,
      at=c(log(0.1),log(0.2),log(0.3),log(0.4),log(0.5),log(0.6),log(0.7),log(0.8),log(0.9),
@@ -245,23 +269,6 @@ axis(side=2,
 axis(side = 1, 
      at = c(1,2,3), 
      labels = F)
-mtext('Storm', side = 3, line = 0)
-
-# SOUTH TWIN # 
-south.twin_dat = chla %>%
-  filter(lake == 'South Twin') 
-south.twin_dat
-
-boxplot(log(chl_ugL)~year, data = south.twin_dat, col = ref_col_18, ylim = c(log(0.1), log(175)), yaxt = 'n')
-stripchart(log(chl_ugL) ~ year, vertical = TRUE, data = south.twin_dat, ylim = c(log(0.1), log(175)), yaxt = 'n',
-           method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
-axis(side=2,
-     at=c(log(0.1),log(0.2),log(0.3),log(0.4),log(0.5),log(0.6),log(0.7),log(0.8),log(0.9),
-          log(1),log(2),log(3),log(4),log(5),log(6),log(7),log(8),log(9),log(10),
-          log(20),log(30),log(40),log(50),log(60),log(70),log(80),log(90),log(100), 
-          log(200)), #Where the tick marks should be drawn
-     labels = F,
-     las=0)
 mtext('South Twin', side = 3, line = 0)
 
 # CENTER # 
@@ -283,8 +290,8 @@ axis(side=2,
 axis(side=1, 
      at=c(1,2,3), 
      labels = F)
-mtext(expression(Chlorophyll~`-`~italic(a)), side = 2, line = 3)
-mtext(expression(Concentration~`(`~mu~g~L^-1~`)`), side =2, line = 1.8)
+mtext(expression(Chlorophyll*`-`*italic(a)), side = 2, line = 3, cex = 0.9)
+mtext(expression(Concentration~`(`*mu*g~L^-1*`)`), side =2, line = 1.8, cex = 0.9)
 mtext('Center', side = 3, line = 0)
 abline(v = 0.5)
 abline(v = 1.5)
@@ -311,13 +318,6 @@ mtext('Five Island', side = 3, line = 0)
 abline(v = 0.5)
 abline(v = 1.5)
 
-#empty plot 
-plot(1, type = "n", xlab = "", yaxt = 'n', xaxt='n',
-     ylab = "", xlim = c(0, 5), 
-     ylim = c(0, 5), col.axis = transparent, bty = 'n')
-# legend("center", legend =c('summer', 'spring'), pch=c(20,22), pt.cex=3, cex=1.5, bty='n',
-#        col = 'gray60')
-
 # NORTH TWIN # 
 ntwin_dat = chla %>%
   filter(lake == 'North Twin') 
@@ -337,9 +337,10 @@ axis(side=2,
 axis(side=1, 
      at=c(1,2,3), 
      labels = c(2018, 2019, 2020))
-mtext(expression(Chlorophyll~`-`~italic(a)), side = 2, line = 3)
-mtext(expression(Concentration~`(`~mu~g~L^-1~`)`), side =2, line = 1.8)
+mtext(expression(Chlorophyll*`-`*italic(a)), side = 2, line = 3, cex = 0.9)
+mtext(expression(Concentration~`(`*mu*g~L^-1*`)`), side =2, line = 1.8, cex = 0.9)
 mtext('North Twin', side = 3, line = 0)
+mtext('Year', side = 1, line = 2, cex = 0.9)
 abline(v = 1.5)
 abline(v = 2.5)
 
@@ -362,7 +363,7 @@ axis(side=1,
      at=c(1,2,3), 
      labels = c(2018, 2019, 2020))
 mtext('Silver', side = 3, line = 0)
-mtext('Year', side = 1, line = 2)
+mtext('Year', side = 1, line = 2, cex = 0.9)
 abline(v = 1.5)
 abline(v = 2.5)
 
@@ -378,57 +379,60 @@ max(secchi$secchi_m) # 2.8
 min(secchi$secchi_m) # 0.1
 
 # Window for checking plot 
-windows(height = 6, width = 6) 
+windows(height = 5.5, width = 4) 
 
 # Will create plot in whatever file path you set  
 #pdf(file = "C:/Users/tjbut/Box Sync/Butts_Dissertation/Hort Chapter/Figures/Hort_Figure3.pdf", 
 # height = 8, 
 #width = 6)
 
-# Plot # 
+
+# ========= PLOTTING COLORS ===== # 
+# Output graphs with linear fits # 
 # Reference - no removal # Blue, South Twin, Storm
 ref_col_18 = rgb(91, 83, 147, max = 255, alpha = 100) 
 ref_col_19 = rgb(91, 83, 147, max = 255, alpha = 180)
 ref_col_20 = rgb(91, 83, 147, max = 255, alpha = 255)
-
-# null, removal, removal # North Twin, Silver
-nrr_col_18 = rgb(43, 73, 112, max = 255, alpha = 100) 
-nrr_col_19 = rgb(43, 73, 112, max = 255, alpha = 180)
-nrr_col_20 = rgb(43, 73, 112, max = 255, alpha = 255)
 
 # removal, removal, null # Center, Five Island 
 rrn_col_18 = rgb(37, 111, 92, max = 255, alpha = 100) 
 rrn_col_19 = rgb(37, 111, 92, max = 255, alpha = 180)
 rrn_col_20 = rgb(37, 111, 92, max = 255, alpha = 255)
 
+# null, removal, removal # North Twin, Silver
+nrr_col_18 = rgb(77, 77, 77, max = 255, alpha = 100) 
+nrr_col_19 = rgb(77, 77, 77, max = 255, alpha = 180)
+nrr_col_20 = rgb(77, 77, 77, max = 255, alpha = 255)
+
 # Set dimensions for figure array # 
-par(mfrow =c(3,3), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
+par(mfrow =c(3,2), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
 par(tcl = -0.25)
 par(mgp = c(2, 0.6, 0))
 
 
-# BLUE # 
-blue_dat = secchi %>% 
-  filter(lake == 'Blue') 
-blue_dat
-
-boxplot(secchi_m~year, data = blue_dat, col = ref_col_20, ylim = rev(c(0, 3)), xaxt = 'n')
-stripchart(secchi_m ~ year, vertical = TRUE, data = blue_dat, ylim = rev(c(0, 3)), yaxt = 'n',
-           method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
-axis(side=1, 
-     at=c(1,2,3), 
-     labels = F)
-mtext(expression(Secchi~Depth~`(`~m~`)`), side = 2, line = 2)
-mtext('Blue', side = 3, line = 0)
+# # BLUE # 
+# blue_dat = secchi %>% 
+#   filter(lake == 'Blue') 
+# blue_dat
+# 
+# boxplot(secchi_m~year, data = blue_dat, col = ref_col_20, ylim = rev(c(0, 3)), xaxt = 'n')
+# stripchart(secchi_m ~ year, vertical = TRUE, data = blue_dat, ylim = rev(c(0, 3)), yaxt = 'n',
+#            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
+# axis(side=1, 
+#      at=c(1,2,3), 
+#      labels = F)
+# mtext(expression(Secchi~Depth~`(`~m~`)`), side = 2, line = 2)
+# mtext('Blue', side = 3, line = 0)
 
 # STORM # 
 storm.su_dat = secchi %>%
   filter(lake == 'Storm') 
 storm.su_dat
 
-boxplot(secchi_m~year, data = storm.su_dat, col = ref_col_19, ylim = rev(c(0, 3)), yaxt = 'n', xaxt = 'n')
+boxplot(secchi_m~year, data = storm.su_dat, col = ref_col_19, ylim = rev(c(0, 3)), xaxt = 'n')
 stripchart(secchi_m ~ year, vertical = TRUE, data = storm.su_dat, ylim = rev(c(0, 3)), yaxt = 'n',
            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
+mtext(expression(Secchi~Depth~`(`~m~`)`), side = 2, line = 2)
 axis(side=2,
      at=rev(c(0, 0.5, 1, 1.5, 2, 2.5, 3)), #Where the tick marks should be drawn
      labels = F,
@@ -443,7 +447,7 @@ south.twin_dat = secchi %>%
   filter(lake == 'South Twin') 
 south.twin_dat
 
-boxplot(secchi_m~year, data = south.twin_dat, col = ref_col_18, ylim = rev(c(0, 3)), yaxt = 'n')
+boxplot(secchi_m~year, data = south.twin_dat, col = ref_col_18, ylim = rev(c(0, 3)), yaxt = 'n', xaxt = 'n')
 stripchart(secchi_m ~ year, vertical = TRUE, data = south.twin_dat, ylim = rev(c(0, 3)), yaxt = 'n',
            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
 axis(side=2,
@@ -451,6 +455,9 @@ axis(side=2,
      labels = F,
      las=0)
 mtext('South Twin', side = 3, line = 0)
+axis(side = 1, 
+     at = c(1,2,3), 
+     labels = F)
 
 # CENTER # 
 center.su_dat = secchi %>%
@@ -487,13 +494,6 @@ mtext('Five Island', side = 3, line = 0)
 abline(v = 0.5)
 abline(v = 1.5)
 
-#empty plot 
-plot(1, type = "n", xlab = "", yaxt = 'n', xaxt='n',
-     ylab = "", xlim = c(0, 5), 
-     ylim = c(0, 5), col.axis = transparent, bty = 'n')
-# legend("center", legend =c('summer', 'spring'), pch=c(20,22), pt.cex=3, cex=1.5, bty='n',
-#        col = 'gray60')
-
 # NORTH TWIN # 
 ntwin_dat = secchi %>%
   filter(lake == 'North Twin') 
@@ -504,6 +504,7 @@ stripchart(secchi_m ~ year, vertical = TRUE, data = ntwin_dat, ylim = rev(c(0,3)
            method = "jitter", add = TRUE, pch = 21, bg = 'gray80', col = 'black', cex = 1.5)
 mtext(expression(Secchi~Depth~`(`~m~`)`), side = 2, line = 2)
 mtext('North Twin', side = 3, line = 0)
+mtext('Year', side = 1, line = 2)
 abline(v = 1.5)
 abline(v = 2.5)
 

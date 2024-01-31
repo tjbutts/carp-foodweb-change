@@ -13,27 +13,16 @@ setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 sizespec = read_csv('shortoutput_zp-miv_springsummer_Blue-rm.csv') %>%
   mutate(year = as.factor(year), 
          lake = as.factor(lake)) %>% 
-  filter(DATAUSEDINFIT != 'dropped')
+  filter(DATAUSEDINFIT != 'dropped') %>%
+  relocate(DENS_LOG, BINMID_LOG) %>% 
+  select(!(DATAUSEDINFIT))
   # Add a dummy variables to assess harvest (No Harvest, Harvest - 1year, Harvest - 2year) 
 sizespec
 
+
+
 fits_dat = read_csv('fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
 fits_dat 
-
-# Bin ranges 
-bins = sizespec %>%
-  group_by(year, lake) %>%
-  summarize(
-    max = max(BINMID_LOG), 
-    min = min(BINMID_LOG), 
-    max2 = max(2^BINMID_LOG), 
-    min2 = min(2^BINMID_LOG)
-  ) %>% 
-  ungroup()
-bins
-
-unique(sizespec$BINMID_LOG)
-
 
 dummy = read_csv('sizespec_dummyvar_Blue-rm.csv') %>%
   mutate(year = as.factor(year),
@@ -41,71 +30,84 @@ dummy = read_csv('sizespec_dummyvar_Blue-rm.csv') %>%
 dummy
 
 
-sizespec = left_join(sizespec, dummy, by = c('lake', 'year'))
+sizespec = left_join(sizespec, dummy, by = c('lake', 'year')) 
 sizespec
-
-
-## Model: (log2[Density]~log2[dry weight bin] x year x lake x dummy variables) - full model 
-
-# Assess models 
-full.aov = aov(DENS_LOG~BINMID_LOG*lake*year*noharv*harv1*harv2*postharv, data = sizespec)
 
 # Run model selection - don't load in MASS because it'll mask a bunch of tidyverse stuff
 
-# Uncomment to show stepAIC values and search, running will mask a ton of tidyverse function so commented here 
-# step.spec = MASS::stepAIC(full.aov, trace = T, direction = 'both') # forward and backward stepwise regression 
-summary(step.spec)
+# # Uncomment to show stepAIC values and search, running will mask a ton of tidyverse function so commented here 
+step.spec = MASS::stepAIC(full.aov, trace = T, direction = 'both', criteria = 'AICc') # forward and backward stepwise regression 
+# summary(step.spec) # This will give rundown of all possible combinations 
+
+# then go back from lowest AIC to highest and run AICc to get corrected values 
+mod1 = aov(DENS_LOG ~ BINMID_LOG + lake + year + harv2, data = sizespec) # AIC = 701.2
+mod2 = aov(DENS_LOG ~ BINMID_LOG + lake + year + harv2 + BINMID_LOG:year, data = sizespec) # AIC = 701.34
+mod3 = aov(DENS_LOG ~ BINMID_LOG + lake + year + harv2 + BINMID_LOG*lake +
+             BINMID_LOG*year, data = sizespec) # AIC = 702.45 
+mod4 = aov(DENS_LOG ~ BINMID_LOG + lake + year + BINMID_LOG*lake + 
+             BINMID_LOG*year, data = sizespec) # AIC = 703.96
+mod5 = aov(DENS_LOG ~ BINMID_LOG + lake + year + BINMID_LOG*lake + BINMID_LOG*year + 
+             lake*year, data = sizespec) # AIC = 715.34
+mod6 = aov(DENS_LOG ~ BINMID_LOG + lake + year + BINMID_LOG*lake + BINMID_LOG*year + 
+             lake*year + BINMID_LOG*lake*year, data = sizespec) # AIC = 719.65
+mod7 = aov(DENS_LOG ~ BINMID_LOG + lake + year + noharv + harv1 + BINMID_LOG*lake + 
+             BINMID_LOG*year + lake*year + BINMID_LOG*lake*year, data = sizespec) # AIC = 719.65
+mod8 = aov(DENS_LOG ~ BINMID_LOG + lake + year + noharv + harv1 + BINMID_LOG*lake + 
+             BINMID_LOG*year + lake*year + BINMID_LOG*lake*year, data = sizespec) # AIC = 719.65
+mod9 = aov(DENS_LOG ~ BINMID_LOG + lake + year + noharv + harv1 + harv2 + 
+             BINMID_LOG*lake + BINMID_LOG*year + lake*year + BINMID_LOG*lake*year, data = sizespec) # AIC = 719.65
+mod10 = aov(DENS_LOG ~ BINMID_LOG + lake + year + noharv + harv1 + harv2 + 
+              postharv + BINMID_LOG*lake + BINMID_LOG*year + lake*year + 
+              BINMID_LOG*lake*year, data = sizespec) # AIC = 719.65
+
+
+# Check model AICc # 
+library(AICcmodavg)
+AICc(mod1, second.ord = T) # AICc = 1739.8
+AICc(mod2, second.ord = T) # AICc = 1740.2
+AICc(mod3, second.ord = T) # AICc = 1742.3
+AICc(mod4, second.ord = T) # AICc = 1743.5
+AICc(mod5, second.ord = T) # AICc = 1757.6
+AICc(mod6, second.ord = T) # AICc = 1766.1
+AICc(mod7, second.ord = T) # AICc = 1766.1
+AICc(mod8, second.ord = T) # AICc = 1766.1
+AICc(mod9, second.ord = T) # AICc = 1766.1
+AICc(mod10, second.ord = T) # AICc = 1766.1
+
+
+## Model: (log2[Density]~log2[dry weight bin] x year x lake x dummy variables) - full model 
+sizespec
+
+# Assess models 
+full.aov = aov(DENS_LOG~BINMID_LOG*lake*year*noharv*harv1*harv2*postharv, data = sizespec)
+AICc(full.aov, second.ord = TRUE)
+reduced = aov(DENS_LOG~BINMID_LOG+lake+year+harv2, data = sizespec)
+AICc(reduced, second.ord = TRUE)
+
+
 
 # Top 5 models - Adjusted R squared # 
 mod1.1 = lm(DENS_LOG~BINMID_LOG+lake+year+harv2, data = sizespec)
 summary(mod1.1) # 61.61% error explained 
-Anova(mod1.1)
+aov(mod1.1)
 
 sz_model = aov(DENS_LOG~BINMID_LOG + lake + year + harv2, data = sizespec)
 summary(sz_model)
 
 
-# # Year and lake is moderating the relationship between Density and Size 
-# # Important to assess interaction in r 
-# 
-# windows(height = 3, width = 4)
-# ggplot(sizespec, aes(BINMID_LOG, DENS_LOG, color = factor(year))) + 
-#   labs( x = expression ( paste ( 'Log'[2], 'Dry Weight Biomass (g)') ), 
-#         y = expression ( paste ( 'Log'[2], 'Abundance (Individuals/m'^2,')' ) ) ) +
-#   geom_point() + 
-#   geom_smooth(method = 'lm', se = F) + 
-#   scale_color_manual(name = 'year', labels = c('2018', '2019', '2020'), values = c('seagreen', 'dodgerblue', 'gray30')) + 
-#   theme_classic()
-
-
+# # lake is moderating the relationship between Density and Size 
 
 library(emmeans)
 library(rstatix)
-#library(multcomp)
+
 
 # Post hoc differences in lake 
-
-# Tukey HSD test 
-# lakes = glht(sz_model, 
-#              linfct = mcp(lake = 'Tukey'))
-# summary(lakes)
-
-# Need to exit and reload R - MASS masks a lot of dplyr functions # 
 sz_model.emms.lk = emmeans(mod1.1, 'lake')
+sz_model.emms.lk
+
+sz_model.emms.lk
 pairs(sz_model.emms.lk)
 
-sz_model.emms.yr = emmeans(mod1.1, 'year')
-pairs(sz_model.emms.yr)
-
-sz_model.emms.harv = emmeans(mod1.1, 'harv2')
-pairs(sz_model.emms.harv)
-
-slope.post = emtrends(mod1.1, specs = 'lake', var = 'BIMNID_LOG')
-pairs(slope.post)
-
-# contrasts 
-postHocs = glht(sz_model, linfct = mcp(lake = 'Tukey'))
-summary(postHocs)
 
 # Regression Code - Height  #============================
 heights = fits_dat %>% 
@@ -115,21 +117,19 @@ heights = fits_dat %>%
 heights
 
 # Define weights to use # 
-wt.mod1 = lm(height~year*lake, data = heights, weights = (1/int_se^2))
+wt.mod1 = aov(height~year*lake, data = heights, weights = (1/int_se^2))
 summary(wt.mod1) 
 
 # Run model selection - don't load in MASS because it'll mask a bunch of tidyverse stuff 
-step.spec.height = MASS::stepAIC(wt.mod1, trace = T, direction = 'both') # forward and backward stepwise regression 
-summary(step.spec.height)
+# step.spec.height = MASS::stepAIC(wt.mod1, trace = T, direction = 'both') # forward and backward stepwise regression 
+# summary(step.spec.height)
 
 wt.mod.fin = lm(height~year+lake, data = heights, weights = (1/int_se^2))
 summary(wt.mod.fin)
 
 
-# Eliminate between lake pairs # 
-
 # Create resid v. fit # 
-plot(fitted(wt.mod1), resid(wt.mod1), xlab = 'fitted', ylab = 'residuals')
+plot(fitted(wt.mod.fin), resid(wt.mod1), xlab = 'fitted', ylab = 'residuals')
 abline(0,0) # Not bad 
 
 
@@ -163,7 +163,7 @@ transparent = rgb(255,255,255, max=255, alpha = 0)
 
 ## REFERENCE ##======================
 # Window for checking plot 
-windows(height = 6, width = 4) 
+windows(height = 5.5, width = 4) 
 
 # Will create plot in whatever file path you set  
 #pdf(file = "C:/Users/tjbut/Box Sync/Butts_Dissertation/Hort Chapter/Figures/Hort_Figure3.pdf", 
@@ -191,6 +191,7 @@ abline(h = -1, lty =3)
 mtext('Size Spectra Slope', side = 2, line = 3)
 mtext('Reference', side = 2, line = 1.8)
 mtext('Storm', side = 3, line = 0)
+text(2017.53, -0.12, 'A', cex = 1.2)
 
 # STORM # 
 # storm.su_dat = fits_dat %>%
@@ -215,7 +216,7 @@ mtext('Storm', side = 3, line = 0)
 
 # SOUTH TWIN # 
 st.su_dat = fits_dat %>%
-  filter(lake == 'South.Twin') 
+  filter(lake == 'South Twin') 
 st.su_dat
 
 plot(slope~year,data = st.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_18, xaxt='n', col.axis = transparent)
@@ -224,7 +225,7 @@ arrows(x0=st.su_dat$year, y0=st.su_dat$slp_l95ci, col = ref_col_18,
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 abline(h = -1, lty =3)
 mtext(side = 3, 'South Twin', line = 0)
-
+text(2017.53, -0.12, 'B', cex = 1.2)
 
 ## RRN ##======================
 # CENTER # 
@@ -242,10 +243,11 @@ mtext(side =3, 'Center', line = 0 )
 abline(h = -1, lty =3)
 abline(v = 2017.65)
 abline(v = 2018.5)
+text(2017.53, -0.12, 'C', cex = 1.2)
 
 # FIVE ISLAND # 
 five.island.su_dat = fits_dat %>%
-  filter(lake == 'Five.Island') 
+  filter(lake == 'Five Island') 
 five.island.su_dat
 
 plot(slope~year, data = five.island.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_18, xaxt = 'n', col.axis = transparent)
@@ -256,6 +258,7 @@ mtext(side = 3, 'Five Island', line = 0)
 abline(h = -1, lty =3)
 abline(v = 2017.65)
 abline(v = 2018.5)
+text(2017.53, -0.12, 'D', cex = 1.2)
 
 # 
 # #empty plot 
@@ -268,7 +271,7 @@ abline(v = 2018.5)
 ## NRR ##==========================
 # NORTH TWIN # 
 north.twin.su_dat = fits_dat %>%
-  filter(lake == 'North.Twin') 
+  filter(lake == 'North Twin') 
 north.twin.su_dat
 
 plot(slope~year, data = north.twin.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_20, xaxt = 'n')
@@ -279,6 +282,7 @@ mtext('Size Spectra Slope', side = 2, line = 3)
 mtext('Removal 2019, 2020', side = 2, line = 1.8)
 mtext(side =3, 'North Twin', line = 0)
 mtext(side = 1, 'Year', line = 2)
+text(2017.53, -0.12, 'E', cex = 1.2)
 
 # north.twin.sp_dat = fits_dat %>%
 #   filter(lake == 'North.Twin') %>% 
@@ -303,6 +307,7 @@ mtext(side = 1, 'Year', line = 2)
 abline(h = -1, lty =3)
 abline(v = 2018.5)
 abline(v = 2019.5)
+text(2017.53, -0.12, 'F', cex = 1.2)
 
 # Make sure height is independent of slope #===============================
 fits_dat
@@ -327,7 +332,7 @@ min(fits_dat$height.l95ci)
 
 ## REFERENCE ##======================
 # Window for checking plot 
-windows(height = 6, width = 4) 
+windows(height = 5.5, width = 4) 
 
 # Will create plot in whatever file path you set  
 #pdf(file = "C:/Users/tjbut/Box Sync/Butts_Dissertation/Hort Chapter/Figures/Hort_Figure3.pdf", 
@@ -351,7 +356,7 @@ axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 mtext(side = 2, 'Size Spectra Height', line = 3)
 mtext('Reference', side = 2, line = 1.8)
 mtext(side =3, line = 0, 'Storm')
-
+text(2017.53, 15.9, 'A', cex = 1.2)
 
 # storm.sp_dat = fits_dat %>%
 #   filter(lake == 'Storm') %>%
@@ -364,7 +369,7 @@ mtext(side =3, line = 0, 'Storm')
 
 # SOUTH TWIN # 
 st.su_dat = fits_dat %>%
-  filter(lake == 'South.Twin') 
+  filter(lake == 'South Twin') 
 st.su_dat
 
 plot(height~year,data = st.su_dat, pch = 19, ylim = c(10, 16), xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_18, xaxt='n', col.axis = transparent)
@@ -372,6 +377,7 @@ arrows(x0=st.su_dat$year, y0=st.su_dat$height.l95ci, col = ref_col_18,
  x1=st.su_dat$year, y1=st.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 mtext(side = 3, 'South Twin', line = 0)
+text(2017.53, 15.9, 'B', cex = 1.2)
 
 # st.sp_dat = fits_dat %>%
 #   filter(lake == 'South.Twin') %>%
@@ -397,6 +403,7 @@ abline(v = 2018.5)
 mtext(side = 2, 'Size Spectra Height', line = 3)
 mtext('Removal 2018, 2019', side = 2, line = 1.8)
 mtext(side =3, 'Center', line = 0)
+text(2017.53, 15.9, 'C', cex = 1.2)
 
 # center.sp_dat = fits_dat %>%
 #   filter(lake == 'Center') %>%
@@ -409,7 +416,7 @@ mtext(side =3, 'Center', line = 0)
 
 # FIVE ISLAND # 
 five.island.su_dat = fits_dat %>%
-  filter(lake == 'Five.Island') 
+  filter(lake == 'Five Island') 
 five.island.su_dat
 
 plot(height~year, data = five.island.su_dat, pch = 19, ylim = c(10, 16), xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_18, xaxt = 'n', col.axis = transparent)
@@ -417,7 +424,7 @@ arrows(x0=five.island.su_dat$year, y0=five.island.su_dat$height.l95ci, col = rrn
  x1=five.island.su_dat$year, y1=five.island.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 mtext(side =3, 'Five Island', line = 0 )
-
+text(2017.53, 15.9, 'D', cex = 1.2)
 # 
 # five.island.sp_dat = fits_dat %>%
 #   filter(lake == 'Five.Island') %>%
@@ -441,7 +448,7 @@ abline(v = 2018.5)
 ## NRR ##==========================
 # NORTH TWIN # 
 north.twin.su_dat = fits_dat %>%
-  filter(lake == 'North.Twin') 
+  filter(lake == 'North Twin') 
 north.twin.su_dat
 
 plot(height~year, data = north.twin.su_dat, pch = 19, ylim = c(10, 16), xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_20, xaxt = 'n')
@@ -451,6 +458,9 @@ axis(side = 1, at = c(2018, 2019, 2020), labels = T)
 mtext(side = 2, 'Size Spectra Height', line = 3)
 mtext('Removal 2019, 2020', side = 2, line = 1.8)
 mtext(side =3, 'North Twin', line = 0)
+mtext(side = 1, 'Year', line = 2)
+text(2017.53, 15.9, 'E', cex = 1.2)
+
 # north.twin.sp_dat = fits_dat %>%
 #   filter(lake == 'North.Twin') %>%
 #   filter(season == 'spring')
@@ -473,6 +483,7 @@ arrows(x0=silver.su_dat$year, y0=silver.su_dat$height.l95ci, col = nrr_col_18,
 axis(side = 1, at = c(2018, 2019, 2020), labels = T)
 mtext(side =3, 'Silver', line = 0)
 mtext(side = 1, 'Year', line = 2)
+text(2017.53, 15.9, 'F', cex = 1.2)
 
 # silver.sp_dat = fits_dat %>%
 #   filter(lake == 'Silver') %>%
@@ -485,8 +496,7 @@ mtext(side = 1, 'Year', line = 2)
 abline(v = 2018.5)
 abline(v = 2019.5)
 
-#=============================================================#
-### Need to get exploitation rate not just mass removed ###=====
+### Cumulative Harvest  ###=====
 #=============================================================#
 
 # Change in Slope v. kg/ha removed #========================== 
@@ -516,7 +526,7 @@ chng_summer
 
 chng_summer$year = c(rep('2019', 6), rep('2020', 12))
 chng_summer = chng_summer %>% mutate(year = as.double(year))
-
+chng_summer
 
 cumulative = fish_harv %>% 
   pivot_longer(cols = c(carp_harv, buff_harv), 
@@ -557,7 +567,7 @@ max(slop_harv_summer$slp_change)
 min(slop_harv_summer$slp_change)
 
 # Carp 
-plot(slp_change ~ carp_harv, data = slop_harv_summer, cex = 1.5, pch = 19, ylim = c(-0.3, 0.2), col.axis = transparent,
+plot(slp_change ~ carp_harv, data = slop_harv_summer, cex = 1.5, pch = 19, ylim = c(-0.4, 0.2), col.axis = transparent,
      ylab = '|Change in slope|', xlab = 'Fish Harvested (kg/ha)', col = carp)
 mod1 = lm(slp_change ~ carp_harv, data = slop_harv_summer)
 axis(side = 2, at = c(-0.2, -0.1, 0, 0.1, 0.2), labels = T, tick = F)
@@ -566,15 +576,16 @@ abline(mod1, col = carp)
 text(70, 0.18, 'p = 0.271',  cex = 1, col = 'black', font = 1)
 mtext(side = 2, line = 1.8, 'Change in slope')
 mtext(side = 3, line = 0.1, 'Common Carp Harvest')
+text(0, 0.19, 'A', cex = 1, col = 'black')
 
-plot(slp_change ~ buff_harv, data = slop_harv_summer, cex = 1.5, pch = 19, col = buffalo, ylim = c(-0.3, 0.2), col.axis = transparent,
+plot(slp_change ~ buff_harv, data = slop_harv_summer, cex = 1.5, pch = 19, col = buffalo, ylim = c(-0.4, 0.2), col.axis = transparent,
        ylab = '|Change in slope|', xlab = 'Fish Harvested (kg/ha)')
 mod2 = lm(slp_change ~ buff_harv, data = slop_harv_summer)
 summary(mod2)
 abline(mod2, col = 'gray80', lty = 2)
 text(550, 0.18, 'p = 0.109',  cex = 1, col = 'gray40', font = 1)
 mtext(side = 3, line = 0.1, 'Bigmouth Buffalo Harvest')
-
+text(0, 0.19, 'B', cex = 1, col = 'black')
 
 
 # Change in Height v. kg/ha removed #========================== 
@@ -610,6 +621,7 @@ abline(mod1, col = carp)
 text(70, 1.8, 'p = 0.577',  cex = 1, col = 'black') 
 mtext(side = 2, line = 1.8, 'Change in height')
 mtext(side = 1, line = 1.8, 'Cumulative Harvest (kg/ha)', cex = 1)
+text(0, 1.9, 'C', cex = 1, col = 'black')
 
 plot(hgt_change ~ buff_harv, data = height_harv_summer, cex = 1.5, pch = 19, col = buffalo, col.axis = transparent,
        ylab = 'Change in height', xlab = 'Fish Harvested (kg/ha)', ylim = c(-2.5, 2))
@@ -619,11 +631,14 @@ abline(mod2, col = buffalo, lty = 2)
 text(550, 1.8, 'p = 0.330',  cex = 1, col = 'gray40')
 axis(side = 1, at = c(0, 200, 400, 600), labels = T, tick = F)
 mtext(side = 1, line = 1.8, 'Cumulative Harvest (kg/ha)', cex = 1)
+text(0, 1.9, 'D', cex = 1, col = 'black')
+
 
 # Change in cumulative harvest combining both fish removed totals # 
 # Slope 
 library(tidyverse)
 library(lubridate)
+
 fish_harv = read_csv('fish_harvest.csv') %>%
   filter(lake != 'Blue')
 fish_harv
@@ -697,6 +712,7 @@ abline(mod1, col = carp)
 text(615, 0.18, 'p = 0.10',  cex = 1, col = 'black', font = 1)
 mtext(side = 2, line = 1.8, 'Change in slope')
 mtext(side = 1, line = 1.8, 'Cumalitive Harvest (kg/ha)') 
+text(10, 0.19, 'A')
 
 # Height 
 fits_summer = fits_dat %>%
@@ -730,6 +746,7 @@ abline(mod2, col = buffalo, lty = 2)
 text(560, 1.8, 'p = 0.39',  cex = 1, col = 'gray40')
 mtext(side = 1, line = 1.8, 'Cumulative Harvest (kg/ha)', cex = 1)
 mtext(side =2, line =1.8, 'Change in height ')
+text(10, 1.9, 'B')
 
 ## Slope x change in cumulative Harvest ##==========================
 # Change in Slope v. kg/ha removed #========================== 
