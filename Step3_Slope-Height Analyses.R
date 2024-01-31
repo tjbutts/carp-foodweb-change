@@ -6,8 +6,6 @@ library(lubridate)
 library(car)
 
 # ANCOVA Code - Slope  #============================
-setwd("C:/Users/tjbut/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
-setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 
 ## load in size spectra data  ## 
 sizespec = read_csv('shortoutput_zp-miv_springsummer_Blue-rm.csv') %>%

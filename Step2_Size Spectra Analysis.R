@@ -1,12 +1,5 @@
 ## Step 2_Size Spectra Analysis ##==============================
 
-# Install sizeSpectra package from Edwards et al. 2017 # 
-if (!require(devtools)) install.packages('devtools')
-library(devtools)
-
-install.packages('sizeSpectra 1.0.0.0.tar.gz', repos = NULL)
-library(sizeSpectra)
-
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
 #browseVignettes("sizeSpectra")
@@ -218,7 +211,7 @@ short.output
 ### Fits of height from overall ### 
 fits.yr.lm$height.overall = fits.yr.lm$slope * ( floor(min(fits.yr.lm$fitmin)) + ceiling(max(fits.yr.lm$fitmax)) ) / 2 + fits.yr.lm$intcpt
 
-## output the data ## 
+## output the data ## (CHANGE to own working directories)
 setwd("C:/Users/tjbut/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
 
