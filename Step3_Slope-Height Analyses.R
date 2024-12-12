@@ -32,6 +32,7 @@ sizespec = left_join(sizespec, dummy, by = c('lake', 'year'))
 sizespec
 
 # Run model selection - don't load in MASS because it'll mask a bunch of tidyverse stuff
+full.aov = aov(DENS_LOG~BINMID_LOG*lake*year*noharv*harv1*harv2*postharv, data = sizespec)
 
 # # Uncomment to show stepAIC values and search, running will mask a ton of tidyverse function so commented here 
 step.spec = MASS::stepAIC(full.aov, trace = T, direction = 'both', criteria = 'AICc') # forward and backward stepwise regression 
@@ -131,7 +132,7 @@ plot(fitted(wt.mod.fin), resid(wt.mod1), xlab = 'fitted', ylab = 'residuals')
 abline(0,0) # Not bad 
 
 
-# Plotting Slope Dynamics #==========================
+# Plotting Slope-Height Dynamics #==========================
 # Load in data # 
 library(tidyverse)
 library(lubridate)
@@ -159,9 +160,9 @@ nrr_col_20 = rgb(77, 77, 77, max = 255, alpha = 255)
 # transparent 
 transparent = rgb(255,255,255, max=255, alpha = 0)
 
-## REFERENCE ##======================
+## Reference SLOPE ##======================
 # Window for checking plot 
-windows(height = 5.5, width = 4) 
+windows(height = 6.5, width = 5) 
 
 # Will create plot in whatever file path you set  
 #pdf(file = "C:/Users/tjbut/Box Sync/Butts_Dissertation/Hort Chapter/Figures/Hort_Figure3.pdf", 
@@ -169,7 +170,7 @@ windows(height = 5.5, width = 4)
 #width = 6)
 
 # Set dimensions for figure array # 
-par(mfrow =c(3,2), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
+par(mfrow =c(3,2), mar = c(0.5,3,1,0.5), oma = c(4,4,.5,.5))
 par(tcl = -0.25)
 par(mgp = c(2, 0.6, 0))
 
@@ -178,18 +179,20 @@ min(fits_dat$slp_l95ci)
 
 # STORM # 
 storm.su_dat = fits_dat %>%
-  filter(lake == 'Storm') 
+  filter(lake == 'Storm')
+storm.su_dat$year = c(2017.9, 2018.9, 2019.9)
 storm.su_dat
 
-plot(slope~year, data = storm.su_dat, pch = 19, ylim = c(-1.2, -0.10),   xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_20, xaxt = 'n')
+plot(slope~year, data = storm.su_dat, pch = 19, ylim = c(-1.2, -0.10),   xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_20, xaxt = 'n', ylab = '')
 arrows(x0=storm.su_dat$year, y0=storm.su_dat$slp_l95ci,
        x1=storm.su_dat$year, y1=storm.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2, col = ref_col_20)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 abline(h = -1, lty =3)
-mtext('Size Spectra Slope', side = 2, line = 3)
-mtext('Reference', side = 2, line = 1.8)
-mtext('Storm', side = 3, line = 0)
-text(2017.53, -0.12, 'A', cex = 1.2)
+mtext('Size Spectra Slope', side = 3, line = 0)
+mtext('Reference', side = 2, line = 3)
+mtext('Slope', side = 2, line = 1.8)
+#mtext('Storm', side = 3, line = 0)
+text(2017.55, -0.12, 'A', cex = 1.2)
 
 # STORM # 
 # storm.su_dat = fits_dat %>%
@@ -215,30 +218,67 @@ text(2017.53, -0.12, 'A', cex = 1.2)
 # SOUTH TWIN # 
 st.su_dat = fits_dat %>%
   filter(lake == 'South Twin') 
-st.su_dat
+st.su_dat$year = c(2018.1, 2019.1, 2020.1)
 
-plot(slope~year,data = st.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_18, xaxt='n', col.axis = transparent)
+points(slope~year,data = st.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_18, xaxt='n', col.axis = transparent)
 arrows(x0=st.su_dat$year, y0=st.su_dat$slp_l95ci, col = ref_col_18,
        x1=st.su_dat$year, y1=st.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
-abline(h = -1, lty =3)
-mtext(side = 3, 'South Twin', line = 0)
-text(2017.53, -0.12, 'B', cex = 1.2)
+#segments(2017, -1, 2018.5, -1, lty = 3)
+#abline(h = -1, v = c(2017.5, 2017.8), lty =3)
+#mtext(side = 3, 'South Twin', line = 0)
+#text(2017.53, -0.12, 'B', cex = 1.2)
 
-## RRN ##======================
+# Legend - Storm & South Twin # 
+legend('bottomright', legend = c('Storm', 'South Twin'), col = c(ref_col_20, ref_col_18), pch = 19, bty = 'n', cex = 1.1)
+
+## Reference HEIGHT ##==========================
+
+# STORM #
+plot(height~year, data = storm.su_dat, pch = 15, ylim = c(10, 16), xlim = c(2017.5, 2020.5), 
+     cex = 2, col = ref_col_20, xaxt = 'n', ylab = '')
+arrows(x0=storm.su_dat$year, y0=storm.su_dat$height.l95ci,col = ref_col_20,
+ x1=storm.su_dat$year, y1=storm.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = F)
+mtext(side = 3, 'Size Spectra Height', line = 0)
+mtext('Height', side = 2, line = 1.8)
+#mtext(side =3, line = 0, 'Storm')
+text(2017.55, 15.9, 'B', cex = 1.2)
+
+# storm.sp_dat = fits_dat %>%
+#   filter(lake == 'Storm') %>%
+#   filter(season == 'spring')
+# storm.sp_dat
+# 
+# points(height~year, data = storm.sp_dat, pch = 22, ylim = c(5, 15), xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_19)
+# #arrows(x0=storm.sp_dat$year, y0=storm.sp_dat$height-storm.sp_dat$int_se,
+# #  x1=storm.sp_dat$year, y1=storm.sp_dat$height+storm.sp_dat$int_se, code = 3, angle=90, length=0)
+
+# SOUTH TWIN # 
+points(height~year,data = st.su_dat, pch = 15, ylim = c(10, 16),
+       xlim = c(2017.5, 2020.5), cex = 2, col = ref_col_18, xaxt='n', col.axis = transparent)
+arrows(x0=st.su_dat$year, y0=st.su_dat$height.l95ci, col = ref_col_18, 
+ x1=st.su_dat$year, y1=st.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = F)
+#mtext(side = 3, 'South Twin', line = 0)
+#text(2017.53, 15.9, 'B', cex = 1.2)
+
+## RRN SLOPE ##======================
 # CENTER # 
 center.su_dat = fits_dat %>%
   filter(lake == 'Center') 
-center.su_dat
+center.su_dat$year = c(2017.9, 2018.9, 2019.9)
 
-plot(slope~year, data = center.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_20, xaxt = 'n')
+plot(slope~year, data = center.su_dat, pch = 19, ylim = c(-1.2, -0.10),  
+     xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_20, xaxt = 'n', ylab = '')
 arrows(x0=center.su_dat$year, y0=center.su_dat$slp_l95ci, col = rrn_col_20,
        x1=center.su_dat$year, y1=center.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
-mtext('Size Spectra Slope', side = 2, line = 3)
-mtext('Removal 2018, 2019', side = 2, line = 1.8)
-mtext(side =3, 'Center', line = 0 )
-abline(h = -1, lty =3)
+#mtext('Size Spectra Slope', side = 2, line = 3)
+mtext('Removal 2018, 2019', side = 2, line = 3)
+mtext(side =2, 'Slope', line = 1.8 )
+#segments(2017, -1, 2018.55, -1, lty = 3)
+abline(h = -1, lty = 3)
 abline(v = 2017.65)
 abline(v = 2018.5)
 text(2017.53, -0.12, 'C', cex = 1.2)
@@ -246,66 +286,125 @@ text(2017.53, -0.12, 'C', cex = 1.2)
 # FIVE ISLAND # 
 five.island.su_dat = fits_dat %>%
   filter(lake == 'Five Island') 
-five.island.su_dat
+five.island.su_dat$year =  c(2018.1, 2019.1, 2020.1)
 
-plot(slope~year, data = five.island.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_18, xaxt = 'n', col.axis = transparent)
+points(slope~year, data = five.island.su_dat, pch = 19, ylim = c(-1.2, -0.10),  
+     xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_18, xaxt = 'n', col.axis = transparent)
 arrows(x0=five.island.su_dat$year, y0=five.island.su_dat$slp_l95ci, col = rrn_col_18,
        x1=five.island.su_dat$year, y1=five.island.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = F)
-mtext(side = 3, 'Five Island', line = 0)
-abline(h = -1, lty =3)
+#mtext(side = 3, 'Five Island', line = 0)
+#abline(h = -1, lty =3)
+#abline(v = 2017.65)
+#abline(v = 2018.5)
+#text(2017.53, -0.12, 'D', cex = 1.2)
+
+# Legend Center & Five Island 
+legend('bottomright', legend = c('Center', 'Five Island'), col = c(rrn_col_20, rrn_col_18), pch = 19, bty = 'n', cex = 1.1)
+
+## RRN HEIGHT ##===========================
+# CENTER # 
+
+plot(height~year, data = center.su_dat, pch = 15, ylim = c(10, 16), 
+     xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_20, xaxt = 'n', ylab = '')
+arrows(x0=center.su_dat$year, y0=center.su_dat$height.l95ci, col = rrn_col_20,
+ x1=center.su_dat$year, y1=center.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = F)
 abline(v = 2017.65)
 abline(v = 2018.5)
-text(2017.53, -0.12, 'D', cex = 1.2)
+#mtext(side = 2, 'Size Spectra Height', line = 3)
+#mtext('Removal 2018, 2019', side = 2, line = 1.8)
+#mtext(side =3, 'Center', line = 0)
+text(2017.53, 15.9, 'D', cex = 1.2)
 
+# FIVE ISLAND # 
+points(height~year, data = five.island.su_dat, pch = 15, ylim = c(10, 16),
+       xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_18, xaxt = 'n', col.axis = transparent)
+arrows(x0=five.island.su_dat$year, y0=five.island.su_dat$height.l95ci, col = rrn_col_18,
+ x1=five.island.su_dat$year, y1=five.island.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = F)
+mtext('Height', side = 2, line = 1.8)
+#mtext(side =3, 'Five Island', line = 0 )
+#ext(2017.53, 15.9, 'D', cex = 1.2)
 # 
-# #empty plot 
-# plot(1, type = "n", xlab = "", yaxt = 'n', xaxt='n',
-#      ylab = "", xlim = c(0, 5), 
-#      ylim = c(0, 5), col.axis = transparent, bty = 'n')
-# # legend("center", legend =c('summer', 'spring'), pch=c(20,22), pt.cex=3, cex=1.5, bty='n',
-# #        col = 'gray60')
+# five.island.sp_dat = fits_dat %>%
+#   filter(lake == 'Five.Island') %>%
+#   filter(season == 'spring')
+# five.island.sp_dat
+# 
+# points(height~year, data = five.island.sp_dat, pch = 22, ylim = c(5, 15), xlim = c(2017.5, 2020.5), cex = 2, col = rrn_col_19)
+abline(v = 2017.65)
+abline(v = 2018.5)
 
-## NRR ##==========================
+## NRR SLOPE ##==========================
 # NORTH TWIN # 
 north.twin.su_dat = fits_dat %>%
   filter(lake == 'North Twin') 
-north.twin.su_dat
+north.twin.su_dat$year = c(2017.9, 2018.9, 2019.9)
 
-plot(slope~year, data = north.twin.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_20, xaxt = 'n')
+plot(slope~year, data = north.twin.su_dat, pch = 19, ylim = c(-1.2, -0.10),  
+     xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_20, xaxt = 'n', ylab = '')
 arrows(x0=north.twin.su_dat$year, y0=north.twin.su_dat$slp_l95ci, col = nrr_col_20,
        x1=north.twin.su_dat$year, y1=north.twin.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2)
 axis(side = 1, at = c(2018, 2019, 2020), labels = T)
-mtext('Size Spectra Slope', side = 2, line = 3)
-mtext('Removal 2019, 2020', side = 2, line = 1.8)
-mtext(side =3, 'North Twin', line = 0)
+#mtext('Size Spectra Slope', side = 2, line = 3)
+mtext('Removal 2019, 2020', side = 2, line = 3)
+mtext(side =2, 'Slope', line = 1.8)
 mtext(side = 1, 'Year', line = 2)
 text(2017.53, -0.12, 'E', cex = 1.2)
-
-# north.twin.sp_dat = fits_dat %>%
-#   filter(lake == 'North.Twin') %>% 
-#   filter(season == 'spring')
-
-abline(h = -1, lty =3)
-abline(v = 2018.5)
+segments(2018.5, 0, 2018.5, -1)
 abline(v = 2019.5)
+
 
 # SILVER # 
 silver.su_dat = fits_dat %>%
   filter(lake == 'Silver') 
-silver.su_dat
+silver.su_dat$year = c(2018.1, 2019.1, 2020.1)
 
-plot(slope~year, data = silver.su_dat, pch = 19, ylim = c(-1.2, -0.10),  xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_18, xaxt = 'n', col.axis = transparent)
+points(slope~year, data = silver.su_dat, pch = 19, ylim = c(-1.2, -0.10),  
+     xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_18, xaxt = 'n', col.axis = transparent)
 arrows(x0=silver.su_dat$year, y0=silver.su_dat$slp_l95ci, col = nrr_col_18,
        x1=silver.su_dat$year, y1=silver.su_dat$slp_u95ci, code = 3, angle=90, length=0, lwd = 2)
-axis(side = 1, at = c(2018, 2019, 2020), labels = T)
-mtext(side = 3, 'Silver', line = 0)
-mtext(side = 1, 'Year', line = 2)
+#axis(side = 1, at = c(2018, 2019, 2020), labels = T)
+#mtext(side = 3, 'Silver', line = 0)
+#mtext(side = 1, 'Year', line = 2)
 
 abline(h = -1, lty =3)
+#abline(v = 2018.5)
+#abline(v = 2019.5)
+#text(2017.53, -0.12, 'F', cex = 1.2)
+
+legend('bottomleft', legend = c('North Twin', 'Silver'), col = c(nrr_col_20, nrr_col_18), pch = 19, cex = 1.1, bty = 'n')
+
+## NRR HEIGHT ##========================
+plot(height~year, data = north.twin.su_dat, pch = 15, ylim = c(10, 16), 
+     xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_20, xaxt = 'n', ylab = '')
+arrows(x0=north.twin.su_dat$year, y0=north.twin.su_dat$height.l95ci, col = nrr_col_20,
+ x1=north.twin.su_dat$year, y1=north.twin.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = T)
+#mtext(side = 2, 'Size Spectra Height', line = 3)
+#mtext('Removal 2019, 2020', side = 2, line = 3)
+mtext(side =2, 'Height', line = 1.8)
+mtext(side = 1, 'Year', line = 2)
+text(2017.53, 15.9, 'F', cex = 1.2)
+
+# north.twin.sp_dat = fits_dat %>%
+#   filter(lake == 'North.Twin') %>%
+#   filter(season == 'spring')
+# north.twin.sp_dat
+# 
+# points(height~year, data = north.twin.sp_dat, pch = 22, ylim = c(5, 15), xlim = c(2018.5, 2019.5), cex = 2, col = nrr_col_20)
+# #arrows(x0=north.twin.sp_dat$year, y0=north.twin.sp_dat$height-north.twin.sp_dat$int_se,
+#x1=north.twin.sp_dat$year, y1=north.twin.sp_dat$height+north.twin.sp_dat$int_se, code = 3, angle=90, length=0)
 abline(v = 2018.5)
 abline(v = 2019.5)
-text(2017.53, -0.12, 'F', cex = 1.2)
+
+# SILVER # 
+points(height~year, data = silver.su_dat, pch = 15, ylim = c(10, 16), xlim = c(2017.5, 2020.5), cex = 2, col = nrr_col_18, xaxt = 'n', col.axis = transparent)
+arrows(x0=silver.su_dat$year, y0=silver.su_dat$height.l95ci, col = nrr_col_18,
+ x1=silver.su_dat$year, y1=silver.su_dat$height.u95ci, code = 3, angle=90, length=0, lwd = 2)
+axis(side = 1, at = c(2018, 2019, 2020), labels = T)
+
 
 # Make sure height is independent of slope #===============================
 fits_dat

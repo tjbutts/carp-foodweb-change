@@ -319,6 +319,26 @@ plot_ssa2 =
 # geom_label(data = output_for_plot, aes(x=-7, y=PLACEMENT, label = format ( round( slope, 2 ), 2) ), show.legend = FALSE)
 plot_ssa2
 
+# Pluck out one plot #==============================
+windows(height = 4, width = 5)
+examp = output_for_plot %>% 
+  filter(lake == 'Storm' & year == 2019)
+examp
+
+examp_mod = lm(DENS_LOG~BINMID_LOG, data = examp)
+examp_mod
+plot(DENS_LOG~BINMID_LOG, data = examp, pch = 21, ylab = '', 
+     xlab = '', 
+     bg = ref_col_20, col = 'black', cex = 1.1, ylim = c(2, 22), xlim = c(-32, -5))
+mtext(expression ( paste ('Log'[2]~'Abundance (Individuals m'^-2~')' ) ), side =2, line = 2)
+mtext(expression ( paste ('Log'[2], 'Dry Weight Biomass (g)')), side = 1, line = 2)
+abline(examp_mod,lwd = 2)
+text(-8.2, 21, 'Slope = -0.45')
+points(-18.41504, 12.16517, pch = 23, bg = 'white', col = 'black', cex = 2, lwd = 4)
+text(-9.55, 19, 'Height = ')
+points(-5.9, 19, pch = 23, bg = 'white', col = 'black', cex = 2, lwd = 4)
+
+
 # slope x height.overall data - unique # 
 fit.data = output_for_plot %>% 
   select(year, lake, n, slope, slp_se, slp_l95ci, slp_u95ci, 
