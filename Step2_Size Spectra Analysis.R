@@ -226,24 +226,6 @@ color_custom2 <- c( "purple", "royalblue2")
 output_for_plot = left_join(short.output, fits.yr.lm, by = c('year', 'lake')) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
 output_for_plot
 
-# Made after loading in previously created shortoutput_zp-miv_springsummer.csv dataframe - but running fits.yr.lm data from L2386 - 2640 
-# Get incorrect plot when load in previously derived fitsdata_zp-miv_long_springsummer.csv. Write csv functions are open in this script (not commented out) 
-# May have written an erroneus fits.yr.lm script accidentally when writing up plotting for Grace - will double check pre-defense; post exit seminar creation
-
-# current output for plot is correct, will write into specific data frame 
-# Currently Fig 2 and Fig 3 agree and are correct - there's a just a weird coding artifact I'm not catching - need to clean up code anyhow 
-
-# Code to generate commented out L2660 - L2667 below # 
-# short.output = read_csv('shortoutput_zp-miv_springsummer.csv')
-# ## Size Spectra Data ## 
-# short.output$lake = factor(short.output$lake, levels = c('Blue','Storm', 'South.Twin', 'Center', 'Five.Island', 'North.Twin','Silver'))
-# 
-# 
-# output_for_plot = short.output %>% 
-#   left_join(., fits.yr.lm, by = c('year', 'lake'), all.x=T) # Join makes it easier for ggplot to take the data, of course it creates many rep values 
-# output_for_plot
-#write_csv(output_for_plot, 'sizespectra_fig2-fits_springsummer.csv')
-
 
 #### Size spectrum analysis with different spectra plotted ####
 library(ggplot2)
@@ -347,8 +329,9 @@ fit.data = output_for_plot %>%
   arrange(lake, year)
 fit.data
 
-#write_csv(fits.yr.lm, 'fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
-#write_csv(short.output, 'shortoutput_zp-miv_springsummer_Blue-rm.csv')
+# Create datasets to use in Step 3 ---------------------------------
+write_csv(fits.yr.lm, 'fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
+write_csv(short.output, 'shortoutput_zp-miv_springsummer_Blue-rm.csv')
 
 fits.yr.lm
 

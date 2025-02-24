@@ -8,7 +8,7 @@ library(car)
 # ANCOVA Code - Slope  #============================
 
 ## load in size spectra data  ## 
-sizespec = read_csv('shortoutput_zp-miv_springsummer_Blue-rm.csv') %>%
+sizespec = read_csv('shortoutput_zp-miv_springsummer_Blue-rm.csv') %>% # Derived dataset from Step 2 
   mutate(year = as.factor(year), 
          lake = as.factor(lake)) %>% 
   filter(DATAUSEDINFIT != 'dropped') %>%
@@ -604,7 +604,7 @@ fish_harv = read_csv('fish_harvest.csv') %>%
 fish_harv
 
 # Create Change in slope column # 
-fits_dat = read_csv('fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
+fits_dat = read_csv('fitsdata_zp-miv_long_springsummer_Blue-rm.csv') # derived data from Step2
 fits_dat
 
 fits_summer = fits_dat %>%

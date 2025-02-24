@@ -179,3 +179,4 @@ abline(v = 2018.5)
 abline(v = 2019.5)
 # mtext(side = 3, 'Silver', line = 0)
 mtext(side = 1, 'Year', line = 2)
+
