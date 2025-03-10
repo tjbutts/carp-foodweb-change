@@ -2,19 +2,20 @@
 
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
-#browseVignettes("sizeSpectra")
-
 
 # Load in SSA dataset #===========================
-output = read_csv('SSA start_zoop.miv-biomass.csv')
+output = read_csv('ssa_zoopmiv_start.csv')
 output
 
+# If want to rerun with only summer data excluding spring (as shown in supplemental) 
+# Uncomment the following line to filter out spring data  
+  # output = output %>% filter(season == "summer")
+
 # Replace lake number with lake name #
-levels(output$lake) = c(levels(output$lake), 'Blue', 'Center', 
+levels(output$lake) = c(levels(output$lake), 'Center', 
                          'Five Island', 'North Twin', 
                          'Silver', 'Storm', 'South Twin')
 
-output$lake[output$lake == '12'] <- 'Blue'
 output$lake[output$lake == '19'] <- 'Center' 
 output$lake[output$lake == '36'] <- 'Five Island' 
 output$lake[output$lake == '90'] <- 'North Twin'
@@ -23,9 +24,6 @@ output$lake[output$lake == '113'] <- 'Storm'
 output$lake[output$lake == '406'] <- 'South Twin'
 output
 
-# Remove Blue Lake - geologically distinct, almost no BMB # 
-output = filter(output, lake != 'Blue')
-output
 
 ## Calculate the number of log2 bins, taken from Edwards et al. 2017 - assign bins
 log2bins_butts = function(x = NULL, counts = NULL)
@@ -145,8 +143,6 @@ fits.yr.lm$year = rep( sort( unique( output.combined$year)), each = length(uniqu
 fits.yr.lm$lake = rep( as.factor ( unique (output.combined$lake) ), each = 1)
 fits.yr.lm
 
-#fits.yr.lm$season = rep(as.character( unique(output.combined$season)), each = 1)
-
 fits.yr.lm$outlierpres = factor ( fits.yr.lm$outlierpres, levels = c('Y', 'N'))
 fits.yr.lm
 
@@ -211,13 +207,9 @@ short.output
 ### Fits of height from overall ### 
 fits.yr.lm$height.overall = fits.yr.lm$slope * ( floor(min(fits.yr.lm$fitmin)) + ceiling(max(fits.yr.lm$fitmax)) ) / 2 + fits.yr.lm$intcpt
 
-## output the data ## (CHANGE to own working directories)
-setwd("C:/Users/tjbut/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
-setwd("J:/Box Sync/Butts_Scripts/Carp Lakes/carp-foodweb-change")
-
 
 ## Size Spectra Data ## 
-short.output$lake = factor(short.output$lake, levels = c('Blue','Storm', 'South Twin', 'Center', 'Five Island', 'North Twin','Silver'))
+short.output$lake = factor(short.output$lake, levels = c('Storm', 'South Twin', 'Center', 'Five Island', 'North Twin','Silver'))
 plot.data = short.output 
 plot.data
 color_custom <- c("limegreen", "royalblue2", "gray50")
@@ -250,12 +242,12 @@ plot_ssa <-
 
 plot_ssa
 
-#### Size Spectrum analysis of all lakes with slopes ( Need to fix graphics) ####
+#### Size Spectrum analysis of all lakes with slopes ####
 # Output graphs with linear fits # 
 library(ggplot2)
 
 # Output graphs with linear fits # 
-# Reference - no removal # Blue, South Twin, Storm
+# Reference - no removal # South Twin, Storm
 ref_col_18 = rgb(91, 83, 147, max = 255, alpha = 100) 
 ref_col_19 = rgb(91, 83, 147, max = 255, alpha = 180)
 ref_col_20 = rgb(91, 83, 147, max = 255, alpha = 255)
@@ -330,12 +322,5 @@ fit.data = output_for_plot %>%
 fit.data
 
 # Create datasets to use in Step 3 ---------------------------------
-write_csv(fits.yr.lm, 'fitsdata_zp-miv_long_springsummer_Blue-rm.csv')
-write_csv(short.output, 'shortoutput_zp-miv_springsummer_Blue-rm.csv')
-
-fits.yr.lm
-
-# If want to rerun with only summer data excluding spring (as shown in supplemental) 
-# Uncomment the following two lines and replace the 'short_output' object on Line 234
-# with the .csv below 
-  # read_csv('shortoutput_zp-miv_summeronly.csv')
+fits_dat = fits.yr.lm
+sizespec = short.output

@@ -1,0 +1,19 @@
+lake,year,noharv,harv1,harv2,postharv
+Center,2018,0,1,0,0
+Five Island,2018,0,1,0,0
+North Twin,2018,0,0,0,0
+Silver,2018,0,0,0,0
+Storm,2018,1,0,0,0
+South Twin,2018,1,0,0,0
+Center,2019,0,0,1,0
+Five Island,2019,0,0,1,0
+North Twin,2019,0,1,0,0
+Silver,2019,0,1,0,0
+Storm,2019,1,0,0,0
+South Twin,2019,1,0,0,0
+Center,2020,0,0,0,1
+Five Island,2020,0,0,0,1
+North Twin,2020,0,0,1,0
+Silver,2020,0,0,1,0
+Storm,2020,1,0,0,0
+South Twin,2020,1,0,0,0
