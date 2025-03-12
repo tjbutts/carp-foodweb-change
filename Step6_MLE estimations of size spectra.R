@@ -14,7 +14,7 @@ library(sizeSpectra)
 library(tidyverse)
 
 # Create the 'output' object to be used for the MLE estimation 
-output = read_csv('ssa_zoopmiv_start.csv')
+output = get_data("edi.1926.1", filenum = 2)
 
 # Replace lake number with lake name #
 levels(output$lake) = c(levels(output$lake),  'Center', 

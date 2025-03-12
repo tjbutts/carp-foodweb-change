@@ -36,7 +36,7 @@ adonis.pair<-function(dist.mat,Factor,nper=999,corr.method="fdr"){
 
 
 # Load in data #==================
-full_zoops = read_csv('carpzoops_final.csv') %>%
+full_zoops = get_data("edi.1926.1", filenum = 4) %>%
   mutate(group = case_when(.$taxon %in% c("Alona",
                                           "Alonella",
                                           "Pleuroxus", 

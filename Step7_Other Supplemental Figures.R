@@ -1,4 +1,4 @@
-## Step 8_Supplemental Information ##==============================
+## Step 7_Supplemental Information ##==============================
 
 # Load in library # 
 if (!require(tidyverse)) install.packages('tidyverse')
@@ -10,7 +10,7 @@ library(tidyverse)
 library(lubridate)
 
 # Data # 
-fish_schnab = read_csv('fish_schnabelestimates.csv') 
+fish_schnab = get_data("edi.1926.1", filenum = 6)
 fish_schnab
 
 # Trim data to year-to-year biomass estimates # 

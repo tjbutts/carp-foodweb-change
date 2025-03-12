@@ -1,10 +1,16 @@
-## Step 2_Size Spectra Analysis ##==============================
+## Step 1_Size Spectra Analysis ##==============================
 
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
+remotes::install_github("bmcafee/EDIutilsAddons") # Install EDIutilsAddons package for easy EDI data download
+library(EDIutilsAddons)
+
+# Data for scripts is available through the environmental data initiative, package id = edi.1926.1 (as of March 11, 2025)
+  # Updates to the metadata or data in the package will be maintained by the author (Tyler Butts, tyler.james.butts@gmail.com)
+  # DOI for the data archived in EDI: https://doi.org/10.6073/pasta/e6307fcbf343d2f948ad552101862704 
 
 # Load in SSA dataset #===========================
-output = read_csv('ssa_zoopmiv_start.csv')
+output = get_data("edi.1926.1", filenum = 2) # Size spectra data 
 output
 
 # If want to rerun with only summer data excluding spring (as shown in supplemental) 

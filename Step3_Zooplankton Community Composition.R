@@ -7,7 +7,7 @@ if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
 
 # Load in data # 
-full_zoops = read_csv('carpzoops_final.csv') %>%
+full_zoops = get_data("edi.1926.1", filenum = 4) %>%
   mutate(group = case_when(.$taxon %in% c("Alona",
                                           "Alonella",
                                           "Pleuroxus", 
@@ -639,7 +639,6 @@ silver.perc
 windows(height = 6, width = 8) 
 # 
 
-
 # Set dimensions for figure array # 
 par(mfrow =c(3,3), mar = c(0.5,1,1,0.5), oma = c(4,4,.5,.5))
 par(tcl = -0.25)
@@ -649,15 +648,17 @@ par(mgp = c(2, 0.6, 0))
 
 barplot(as.matrix(storm.perc[1:8,2:4]), col=ramp, 
         names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+axis(side =1, at = c(0.7,1.9,3.1), labels = F, tick = T) #  labels = c('2018', '2019', '2020'), tick = T)
 box()
 mtext(side = 3, 'Storm')
 mtext(side =2, line=3, 'ZP Biomass (%)', cex=1)
 mtext(side =2, line=1.8, 'Reference', cex =1)
+
 barplot(as.matrix(south.twin.perc[1:8,2:4]), col=ramp, col.axis = transparent, 
         names.arg = c('2018', '2019', '2020'), border=T)
 box()
 mtext(side = 3, 'South Twin')
+axis(side =1, at = c(0.7,1.9,3.1), labels = F, tick = T) #  labels = c('2018', '2019', '2020'), tick = T)
 
 #empty plot 
 plot(1, type = "n", xlab = "", col.axis = transparent, xaxt='n', yaxt = 'n',
@@ -672,7 +673,7 @@ legend("bottomleft", legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
 barplot(as.matrix(center.perc[1:8,2:4]), col=ramp, 
         names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+axis(side =1, at = c(0.7,1.9,3.1), labels = F, tick = T) #  labels = c('2018', '2019', '2020'), tick = T)
 mtext(side =2, line=3, 'ZP Biomass (%)', cex=1)
 mtext(side =2, line=1.8, 'Removal 2018 - 2019', cex =1)
 mtext(side = 3, 'Center')
@@ -680,7 +681,7 @@ mtext(side = 3, 'Center')
 barplot(as.matrix(five.island.perc[1:8,2:4]), col=ramp, col.axis = transparent,
         names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+axis(side =1, at = c(0.7,1.9,3.1), labels = F, tick = T) #  labels = c('2018', '2019', '2020'), tick = T)
 mtext(side = 3, 'Five Island')
 
 #empty plot 
@@ -696,18 +697,18 @@ legend(0.1,5.5, legend = taxa2, pch=c(15), pt.cex=3, cex=1.5, bty='n',
 
 # NRR
 barplot(as.matrix(north.twin.perc[1:8,2:4]), col=ramp,
-        names.arg = c('2018', '2019', '2020'), border=T);
+        names.arg = c('2018', '2019', '2020'), border=T, xaxt = 'n');
 box()
 mtext(side =2, line=3, 'ZP Biomass (%)', cex=1)
 mtext(side =2, line=1.8, 'Removal 2019 - 2020', cex =1)
-axis(side =1, at = xax[c(1,2,3)], labels = F, tick = T)
+axis(side =1, at = c(0.7,1.9,3.1), labels = c('2018', '2019', '2020'), tick = T)
 mtext(side =3, 'North Twin')
 mtext(side = 1, line=2, 'Year')
 
 barplot(as.matrix(silver.perc[1:8,2:4]), col=ramp, col.axis = transparent,
         names.arg = c('2018', '2019', '2020'), border=T);
 box()
-axis(side =1, at = xax[c(1,2,3)], labels = c('2018', '2019', '2020'), tick = T)
+axis(side =1, at = c(0.7,1.9,3.1), labels = c('2018', '2019', '2020'), tick = T)
 mtext(side =3, 'Silver')
 mtext(side = 1, line=2, 'Year')
 

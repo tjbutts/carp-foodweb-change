@@ -4,10 +4,8 @@
 # ========= PACKAGES ========== #
 if (!require(tidyverse)) install.packages('tidyverse')
 library(tidyverse)
-library(here)
 
-
-miv = read_csv('MIV_biomass.csv') %>% 
+miv = get_data("edi.1926.1", filenum = 5) %>% 
   select(lake, year, taxa, density, miv_arealbiomass_mg.m2) %>% 
   filter(taxa != 'Chaoboridae')
 miv
